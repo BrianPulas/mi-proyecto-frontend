@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 // NOTA: Para que este código funcione, debes asegurarte de importar 'frontend/styles.css'
-// en tu archivo de entrada principal (ej. src/main.jsx o src/App.jsx si es el único archivo).
-// Por ejemplo: import './styles.css';
+// Y el nuevo 'frontend/Navbar.css' (que te daré más abajo)
+// en tu archivo de entrada principal (ej. src/main.jsx).
+// Por ejemplo:
+// import './styles.css';
+// import './Navbar.css';
 
-const API_URL = 'http://localhost:3000/api'; // Asegúrate de que coincida con el puerto del backend
+const API_URL = '/api';
 
 // --- Componente Utilidad: StarRating ---
 const StarRating = ({ puntuacion }) => (
@@ -26,6 +29,34 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
     >
         {children}
     </button>
+);
+
+// --- (¡AÑADIDO!) Componente Navbar ---
+// Este Navbar está adaptado para usar tu sistema de vistas (setView)
+// La prop 'onNavigate' recibirá la función 'setView'
+const Navbar = ({ onNavigate }) => (
+  <nav className="navbar">
+    <div className="navbar-logo">
+      {/* Clic en el logo te lleva a la home (vista 0) */}
+      <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(0); }}>
+        PLUS ULTRA
+      </a>
+    </div>
+    <ul className="navbar-links">
+      <li>
+        {/* Botón para Añadir Juego (vista 1) */}
+        <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(1); }}>
+          Añadir Juego
+        </a>
+      </li>
+      <li>
+        {/* Botón para Estadísticas (vista 4) */}
+        <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(4); }}>
+          Estadísticas
+        </a>
+      </li>
+    </ul>
+  </nav>
 );
 
 // --- Componente TarjetaJuego ---
@@ -366,7 +397,12 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
         <div className="detail-layout">
             {/* Columna de Imagen y Info */}
             <div className="lg-col-span-1">
+                {/* --- (NOTA) ---
+                    He movido el botón de "Volver" al componente EstadisticasPersonales
+                    y al de DetalleJuego (aquí abajo) para que no esté en el Navbar principal
+                */}
                 <Button onClick={onBack} color="blue" style={{ marginBottom: '1.5rem', width: '100%' }}>← Volver a la Biblioteca</Button>
+                
                 <img
                     src={juego.imagenPortada}
                     alt={juego.titulo}
@@ -517,7 +553,7 @@ const App = () => {
         if (filterCompletado) params.append('completado', filterCompletado);
         if (ordenarPor) params.append('ordenarPor', ordenarPor);
         
-        const API_URL = 'http://localhost:3000/api';
+        const API_URL = '/api';
         const url = `${API_URL}/juegos?${params.toString()}`;
 
         try {
@@ -624,17 +660,10 @@ const App = () => {
 
         return (
             <div className="app-container">
-                <header style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem' }}>
-                    <h1 className="header-title">PLUS ULTRA GameTracker</h1>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <Button onClick={() => setView(1)} color="green">
-                            + Añadir Juego
-                        </Button>
-                        <Button onClick={() => setView(4)} color="blue">
-                            📊 Estadísticas
-                        </Button>
-                    </div>
-                </header>
+                {/* --- (ELIMINADO) ---
+                El <header> que estaba aquí fue eliminado
+                porque el Navbar global ahora lo reemplaza.
+                */}
 
                 {/* Área de Filtros y Búsqueda */}
                 <div className="form-card shadow-lg" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
@@ -737,9 +766,18 @@ const App = () => {
 
     return (
         <div className="min-h-screen font-sans" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-primary)' }}>
+            
+            {/* --- (AÑADIDO) ---
+            Aquí se renderiza el Navbar global.
+            Le pasamos 'setView' como la prop 'onNavigate'.
+            */}
+            <Navbar onNavigate={setView} />
+            
+            {/* Aquí se renderiza el contenido de la vista actual */}
             {renderContent()}
         </div>
     );
 };
+
 
 export default App;

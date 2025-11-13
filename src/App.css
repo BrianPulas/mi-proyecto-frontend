@@ -40,3 +40,37 @@
 .read-the-docs {
   color: #888;
 }
+/* Asumiendo que tu 'App.jsx' tiene un div con esta clase */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden; /* Para que el overlay no se desborde */
+}
+
+/* El efecto de scanlines */
+.app-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* Crea líneas semitransparentes */
+  background: repeating-linear-gradient(
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.3) 3px,
+    rgba(0, 0, 0, 0.3) 4px
+  );
+
+  z-index: 1000; /* Por encima de todo */
+  pointer-events: none; /* Para que no bloquee los clics */
+}
+
+/* Ajustar padding global para pantallas pequeñas */
+@media (max-width: 480px) {
+  #root {
+    padding: 1rem;
+  }
+}

@@ -1,3 +1,4 @@
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -23,11 +24,24 @@ a:hover {
 }
 
 body {
+  font-family: 'Press Start 2P', cursive;
+  background-color: #0a0a0a; /* Fondo oscuro */
+  color: #f0f0f0; /* Texto claro */
+
+  /* Evita que las fuentes pixel se vean borrosas */
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+h1, h2, h3 {
+  text-shadow: 4px 4px 0px #000000; /* Sombra de texto dura */
 }
 
 h1 {

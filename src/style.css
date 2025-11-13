@@ -1,287 +1,465 @@
 /* ------------------------------------------- */
-/* Estilos Base y Variables CSS */
+/* Estilos Base y Variables CSS (TEMA RETRO) */
 /* ------------------------------------------- */
 :root {
-    --color-bg-dark: #0f172a; /* Slate 900 */
-    --color-bg-card: #1e293b; /* Slate 800 */
-    --color-bg-input: #334155; /* Slate 700 */
-    --color-text-primary: #cbd5e1; /* Slate 300 */
-    --color-accent-blue: #3b82f6; /* Blue 500 */
-    --color-accent-green: #10b981; /* Green 500 */
-    --color-accent-red: #ef4444; /* Red 500 */
-    --color-accent-yellow: #f59e0b; /* Yellow 600 */
-    --color-border: #475569; /* Slate 600 */
+  /* Paleta Neon */
+  --background: #0a0a0a;
+  --text: #f0f0f0;
+  --primary-neon: #ff00ff; /* Magenta */
+  --secondary-neon: #00ffff; /* Cyan */
+  --accent-neon: #00ff00; /* Verde Lima */
+  --yellow-neon: #ffff00;
+  --red-neon: #ff3333;
+
+  /* --- Mapeo a las variables de tu proyecto --- */
+  --color-bg-dark: var(--background);
+  --color-bg-card: #1a1a1a;
+  --color-bg-input: #222;
+  --color-border: var(--primary-neon); /* Borde principal */
+
+  /* Colores de acento */
+  --color-accent-blue: var(--secondary-neon);
+  --color-accent-green: var(--accent-neon);
+  --color-accent-red: var(--red-neon);
+  --color-accent-yellow: var(--yellow-neon);
 }
 
 body {
-    background-color: var(--color-bg-dark);
-    color: var(--color-text-primary);
-    font-family: 'Inter', sans-serif; /* Asumimos una fuente moderna */
-    margin: 0;
-    padding: 0;
+  font-family: 'Press Start 2P', cursive;
+  background-color: var(--color-bg-card); 
+  color: var(--text);
+
+  /* Evita que las fuentes pixel se vean borrosas */
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  
+  /* Para el efecto Scanlines */
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Efecto "Scanlines" de TV Vieja */
+body::before {
+  content: "";
+  position: fixed; /* Fijo para que cubra todo */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Crea líneas semitransparentes */
+  background: repeating-linear-gradient(
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.3) 3px,
+    rgba(0, 0, 0, 0.3) 4px
+  );
+  
+  z-index: 1000; /* Por encima de todo */
+  pointer-events: none; /* Para que no bloquee los clics */
+}
+
+
+/* Títulos y Enlaces Base */
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 2px 2px 0px #000;
+}
+h1 { color: var(--primary-neon); }
+h2 { color: var(--secondary-neon); }
+h3 { color: var(--accent-neon); }
+
+a {
+  color: var(--secondary-neon);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-neon);
+  text-decoration: underline;
 }
 
 /* ------------------------------------------- */
 /* Utilidades y Contenedores */
 /* ------------------------------------------- */
 .app-container {
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  /* z-index y position para estar sobre las scanlines */
+  position: relative;
+  z-index: 1;
 }
 
+/* Sombra Retro */
 .shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 8px 8px 0px var(--secondary-neon);
 }
 
+/* Bordes Retro (Sin redondeo) */
 .rounded-xl {
-    border-radius: 0.75rem;
+  border-radius: 0;
 }
 
+/* Botón Retro (Fusionado con tu clase .button) */
 .button {
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    color: white;
-    border-radius: 0.5rem;
-    transition: all 0.2s;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-family: 'Press Start 2P', cursive;
+  padding: 12px 20px;
+  color: #000; /* Texto negro sobre fondo neon */
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 0; /* ¡Estilo retro! */
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.button-blue {
-    background-color: var(--color-accent-blue);
-}
-.button-blue:hover {
-    background-color: #2563eb; /* Blue 600 */
-}
-
-.button-green {
-    background-color: var(--color-accent-green);
-}
-.button-green:hover {
-    background-color: #059669; /* Green 600 */
+/* Efecto de "presionado" */
+.button:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
 }
 
-.button-red {
-    background-color: var(--color-accent-red);
-}
-.button-red:hover {
-    background-color: #dc2626; /* Red 600 */
-}
+/* Colores de botones */
+.button-blue { background-color: var(--color-accent-blue); }
+.button-blue:hover { background-color: #33ffff; } /* Cyan más claro */
+
+.button-green { background-color: var(--color-accent-green); }
+.button-green:hover { background-color: #33ff33; } /* Verde más claro */
+
+.button-red { background-color: var(--color-accent-red); }
+.button-red:hover { background-color: #ff5555; } /* Rojo más claro */
+
 
 /* ------------------------------------------- */
 /* Formularios y Campos */
 /* ------------------------------------------- */
 .form-card {
-    background-color: var(--color-bg-card);
-    padding: 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    max-width: 800px;
-    margin: 0 auto;
+  background-color: var(--color-bg-card);
+  padding: 1.5rem;
+  border-radius: 0; /* ¡Estilo retro! */
+  max-width: 800px;
+  margin: 0 auto;
+  
+  /* Estilo de tarjeta retro */
+  border: 4px solid var(--primary-neon);
+  box-shadow: 8px 8px 0px var(--primary-neon);
 }
 
 .form-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 @media (min-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .input-field,
 .select-field,
 .textarea-field {
-    padding: 0.75rem;
-    background-color: var(--color-bg-input);
-    color: white;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-border);
-    width: 100%;
-    box-sizing: border-box;
+  padding: 0.75rem;
+  background-color: var(--color-bg-input);
+  color: white;
+  border-radius: 0; /* ¡Estilo retro! */
+  border: 2px solid var(--color-border);
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.75rem; /* Fuente pixel es grande, la bajamos */
 }
 .input-field:focus,
 .select-field:focus,
 .textarea-field:focus {
-    border-color: var(--color-accent-blue);
-    outline: none;
+  border-color: var(--color-accent-blue);
+  outline: none;
+  /* Efecto GLOw al enfocar */
+  box-shadow: 0 0 10px var(--color-accent-blue);
 }
 .textarea-field {
-    grid-column: 1 / -1; /* Ocupa todo el ancho en la cuadrícula */
-    resize: vertical;
+  grid-column: 1 / -1;
+  resize: vertical;
 }
 
 .checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* ------------------------------------------- */
-/* Tarjeta de Juego */
+/* Tarjeta de Juego (Estilo Cyber-Glow) */
 /* ------------------------------------------- */
 .game-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
 .game-card {
-    background-color: var(--color-bg-card);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s;
-    display: flex;
-    flex-direction: column;
+  background-color: var(--color-bg-card); /* Fondo oscuro */
+  padding: 1rem;
+  border-radius: 0; /* Mantenemos bordes rectos */
+  display: flex;
+  flex-direction: column;
+  
+  /* --- ¡AQUÍ LA MAGIA! --- */
+  
+  /* 1. Borde fino color cyan */
+  border: 2px solid var(--secondary-neon);
+  
+  /* 2. Brillo (Glow) color cyan */
+  box-shadow: 0 0 10px var(--secondary-neon);
+  
+  /* 3. Transición suave para el hover */
+  transition: box-shadow 0.3s, border-color 0.3s;
 }
+
 .game-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-    transform: scale(1.02);
+  /* 1. Al pasar el mouse, el borde cambia a verde */
+  border-color: var(--accent-neon);
+  
+  /* 2. Y el brillo (Glow) también cambia a verde */
+  box-shadow: 0 0 15px var(--accent-neon);
 }
 
 .game-card-img {
-    width: 100%;
-    height: 12rem; /* 192px */
-    object-fit: cover;
-    border-radius: 0.375rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--color-border);
+  width: 100%;
+  height: 12rem; 
+  object-fit: cover;
+  border-radius: 0; 
+  margin-bottom: 1rem;
+  
+  /* Hacemos que el borde de la imagen también sea cyan */
+  border: 2px solid var(--secondary-neon); 
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 480px) {
+  .game-card-img {
+    height: 9rem;
+  }
 }
 
 .game-status-completed {
-    background-color: var(--color-accent-green);
-    color: white;
+  background-color: var(--color-accent-green);
+  color: #000; 
 }
 .game-status-pending {
-    background-color: var(--color-accent-yellow);
-    color: white;
+  background-color: var(--color-accent-yellow);
+  color: #000; 
 }
 .game-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    width: fit-content;
-    margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0; 
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+  margin-bottom: 1rem;
 }
 
 .card-button-group {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* En pantallas medias y grandes, los botones en línea y con wrap */
+@media (min-width: 640px) {
+  .card-button-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 }
 
 /* ------------------------------------------- */
 /* Vista de Detalle y Reseñas */
 /* ------------------------------------------- */
 .detail-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: var(--color-bg-dark); /* Color oscuro principal */
-    padding: 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: var(--color-bg-dark);
+  padding: 1.5rem;
+  border-radius: 0; /* ¡Estilo retro! */
+  
+  /* Tarjeta retro principal */
+  border: 4px solid var(--primary-neon);
+  box-shadow: 8px 8px 0px var(--primary-neon);
 }
 
 @media (min-width: 1024px) {
-    .detail-layout {
-        grid-template-columns: 1fr 2fr;
-    }
+  .detail-layout {
+    grid-template-columns: 1fr 2fr;
+  }
 }
 
 .detail-sidebar-content {
-    background-color: var(--color-bg-card);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border-top: 4px solid var(--color-accent-blue);
+  background-color: var(--color-bg-card);
+  padding: 1rem;
+  border-radius: 0; /* ¡Estilo retro! */
+  border: 2px solid var(--color-accent-blue);
+  box-shadow: 4px 4px 0px var(--color-accent-blue);
 }
 
 .review-card {
-    background-color: var(--color-bg-card);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--color-border);
+  background-color: var(--color-bg-card);
+  padding: 1rem;
+  border-radius: 0; /* ¡Estilo retro! */
+  border: 1px solid var(--color-border);
+  box-shadow: 4px 4px 0px var(--color-border);
 }
 .review-form {
-    background-color: var(--color-bg-input);
-    padding: 1.25rem;
-    border-radius: 0.5rem;
-    margin-top: 1rem;
+  background-color: var(--color-bg-input);
+  padding: 1.25rem;
+  border-radius: 0; /* ¡Estilo retro! */
+  margin-top: 1rem;
+  border: 2px solid var(--secondary-neon);
 }
 
 /* ------------------------------------------- */
 /* Dashboard de Estadísticas */
 /* ------------------------------------------- */
 .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 @media (min-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .stats-card {
-    background-color: var(--color-bg-card);
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    text-align: center;
+  background-color: var(--color-bg-card);
+  padding: 1.5rem;
+  border-radius: 0; /* ¡Estilo retro! */
+  text-align: center;
+  border: 2px solid var(--color-border);
+  box-shadow: 4px 4px 0px var(--color-border);
 }
-.stats-card-border-blue { border-top: 4px solid var(--color-accent-blue); }
-.stats-card-border-green { border-top: 4px solid var(--color-accent-green); }
-.stats-card-border-yellow { border-top: 4px solid var(--color-accent-yellow); }
+.stats-card-border-blue { 
+  border-color: var(--color-accent-blue);
+  box-shadow: 4px 4px 0px var(--color-accent-blue);
+}
+.stats-card-border-green {
+  border-color: var(--color-accent-green);
+  box-shadow: 4px 4px 0px var(--color-accent-green);
+}
+.stats-card-border-yellow {
+  border-color: var(--color-accent-yellow);
+  box-shadow: 4px 4px 0px var(--color-accent-yellow);
+}
 
 .stats-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
 }
 .stats-list li {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* ------------------------------------------- */
 /* Estilos para Estrellas y Títulos */
 /* ------------------------------------------- */
 .star-rating {
-    display: flex;
-    font-size: 1.5rem;
-    color: var(--color-accent-yellow);
+  display: flex;
+  font-size: 1.5rem;
+  color: var(--color-accent-yellow);
 }
 .star-rating .filled {
-    color: var(--color-accent-yellow);
+  color: var(--color-accent-yellow);
 }
 .star-rating .empty {
-    color: var(--color-border);
+  color: var(--color-border);
 }
 
 .header-title {
-    font-size: 2.25rem; /* 36px */
-    font-weight: 800;
-    color: var(--color-accent-blue);
+  font-size: 2.25rem;
+  color: var(--color-accent-blue);
+  text-shadow: 4px 4px 0px #000;
+}
+
+/* Títulos responsivos */
+@media (max-width: 480px) {
+  .header-title {
+    font-size: clamp(1.25rem, 6vw, 2rem);
+  }
+  .secondary-title {
+    font-size: clamp(1rem, 4.5vw, 1.5rem);
+  }
 }
 
 .secondary-title {
-    font-size: 1.5rem; /* 24px */
-    font-weight: 700;
-    color: var(--color-accent-blue);
+  font-size: 1.5rem;
+  color: var(--color-accent-blue);
+  text-shadow: 2px 2px 0px #000;
+}
+
+/* ------------------------------------------- */
+/* CLASES RETRO ELIMINADAS */
+/* ------------------------------------------- */
+/* Se eliminaron las clases '.card' y '.retro-button' 
+  que estaban duplicadas al final, ya que sus estilos
+  se fusionaron con tus clases existentes 
+  ('.game-card', '.form-card', '.button', etc.)
+*/
+/* 1. Define el ciclo de colores */
+@keyframes neon-cycle {
+  0%, 100% { color: var(--primary-neon); /* Magenta */ }
+  25% { color: var(--secondary-neon); /* Cyan */ }
+  50% { color: var(--accent-neon); /* Verde */ }
+  75% { color: var(--yellow-neon); /* Amarillo */ }
+}
+
+/* 2. Estilos base del logo temático */
+.logo-link-themed {
+  display: flex;
+  text-decoration: none;
+  font-size: 1.75rem; 
+  text-shadow: 2px 2px 0px #000;
+  image-rendering: pixelated;
+}
+
+/* 3. Aplica la animación a cada letra */
+.logo-link-themed span {
+  animation: neon-cycle 3s infinite linear;
+  transition: transform 0.2s;
+}
+
+/* 4. El espacio no se anima */
+.logo-space {
+  width: 0.5em;
+  animation: none;
+}
+
+/* 5. ¡LA CLAVE! El retraso para cada letra */
+.logo-P { animation-delay: 0s; }
+.logo-L { animation-delay: 0.2s; }
+.logo-U { animation-delay: 0.4s; }
+.logo-S { animation-delay: 0.6s; }
+/* (el espacio no tiene) */
+.logo-U2 { animation-delay: 0.8s; }
+.logo-L2 { animation-delay: 1.0s; }
+.logo-T { animation-delay: 1.2s; }
+.logo-R { animation-delay: 1.4s; }
+.logo-A { animation-delay: 1.6s; }
+
+/* Efecto hover */
+.logo-link-themed span:hover {
+  transform: scale(1.2);
+  animation-play-state: paused; /* Pausa la animación al tocarla */
 }
