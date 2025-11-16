@@ -31,31 +31,55 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
     </button>
 );
 
-// --- (¡AÑADIDO!) Componente Navbar ---
-const Navbar = ({ onNavigate }) => (
-  <nav className="navbar">
-    <div className="navbar-logo">
-      {/* Clic en el logo te lleva a la home (vista 0) */}
-      <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(0); }}>
-        PLUS ULTRA
-      </a>
-    </div>
-    <ul className="navbar-links">
-      <li>
-        {/* Botón para Añadir Juego (vista 1) */}
-        <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(1); }}>
-          Añadir Juego
+// --- (¡MODIFICADO!) Componente Navbar (Ahora con menú responsive) ---
+const Navbar = ({ onNavigate }) => {
+  // 1. Añadimos estado para el menú
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 2. Función para cerrar el menú al hacer clic en un enlace
+  const handleNavigate = (view) => {
+    onNavigate(view);
+    setIsMenuOpen(false); // Cierra el menú al navegar
+  };
+  
+  return (
+    <nav className="navbar">
+      <div className="navbar-logo">
+        {/* Clic en el logo te lleva a la home */}
+        <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(0); }}>
+          PLUS ULTRA
         </a>
-      </li>
-      <li>
-        {/* Botón para Estadísticas (vista 4) */}
-        <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(4); }}>
-          Estadísticas
-        </a>
-      </li>
-    </ul>
-  </nav>
-);
+      </div>
+
+      {/* 3. Botón de Hamburguesa (solo visible en móvil) */}
+      <button 
+        className="navbar-toggle" 
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label="Toggle navigation"
+      >
+        {/* Esto crea el ícono de 3 líneas (la hamburguesa) */}
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      {/* 4. Los enlaces ahora tienen una clase 'active' si el menú está abierto */}
+      <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(1); }}>
+            Añadir Juego
+          </a>
+        </li>
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(4); }}>
+            Estadísticas
+          </a>
+        </li>
+      </ul>
+    </nav>
+  );
+};
+
 
 // --- Componente TarjetaJuego ---
 // Reemplaza con esto:
@@ -678,7 +702,7 @@ const App = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="input-field"
-                        style={{ marginBottom: '1rem' }}
+                        style={{ marginBottom: '1am' }}
                     />
                     <div className="form-grid">
                         <select
