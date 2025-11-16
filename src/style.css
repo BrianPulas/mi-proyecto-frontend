@@ -271,16 +271,15 @@ a:hover {
 /* ------------------------------------------- */
 /* (¡MODIFICADO!) Contenedor de Login */
 /* ------------------------------------------- */
-/* REEMPLAZA CON ESTO: */
 .login-container {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  min-height: calc(100vh - 70px); 
+  min-height: calc(100vh - 70px);
 
-  /* ¡Esta es la ruta correcta! */
-  background-image: url('/login-background.jpg'); 
+  /* Usa la extensión real en /public */
+  background-image: url('/login-background.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -288,13 +287,8 @@ a:hover {
 
 /* --- (¡NUEVO!) Clase para formulario translúcido --- */
 .form-card-translucent {
-  /* Fondo oscuro con 75% de opacidad */
-  background-color: rgba(30, 30, 30, 0.75); /* Es tu --color-bg-card, pero con transparencia */
-  
-  /* Efecto "Vidrio Esmerilado" (Blur) */
+  background-color: rgba(30, 30, 30, 0.75);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* Para Safari */
-  
-  /* Borde sutil para destacarlo del fondo */
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }

@@ -44,16 +44,14 @@
 .app-container {
   position: relative;
   min-height: 100vh;
-  overflow: hidden; /* Para que el overlay no se desborde */
+  overflow: hidden;
 }
-
-/* El efecto de scanlines */
+/* Overlay desactivado (mantén una única definición) */
 .app-container::before {
-  content: none; /* Desactiva el overlay para evitar pantalla negra */
+  content: none;
   position: absolute;
   top: 0;
   left: 0;
-  /* mantenemos las reglas por compatibilidad, pero no se renderiza */
   width: 100%;
   height: 100%;
   background: none;
@@ -68,8 +66,7 @@
   }
 }
 
-/* Eliminado: bloque duplicado de .app-container::before con inset */
-/* (Se mantiene solo la primera definición con content: none) */
+/* Eliminación de estilos del template de Vite no usados */
 .app-container::before {
   inset: 0; /* reemplaza width/height por un inset completo */
   width: auto;
