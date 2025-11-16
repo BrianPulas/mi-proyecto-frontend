@@ -32,8 +32,6 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
 );
 
 // --- (¡AÑADIDO!) Componente Navbar ---
-// Este Navbar está adaptado para usar tu sistema de vistas (setView)
-// La prop 'onNavigate' recibirá la función 'setView'
 const Navbar = ({ onNavigate }) => (
   <nav className="navbar">
     <div className="navbar-logo">
@@ -69,9 +67,12 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
             onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
         />
         <h3 className="text-xl font-bold text-blue-400 truncate mb-1" style={{ color: 'var(--color-accent-blue)' }}>{juego.titulo}</h3>
-        <p className="text-sm text-gray-400 mb-2" style={{ color: 'var(--color-text-primary)', opacity: 0.7 }}>
-            {juego.genero} • {juego.plataforma} ({juego.añoLanzamiento})
-        </p>
+        // Reemplaza con esto:
+    <div className="game-card-tags">
+      <span className="game-tag tag-genero">{juego.genero}</span>
+      <span className="game-tag tag-plataforma">{juego.plataforma}</span>
+      <span className="game-tag tag-año">{juego.añoLanzamiento}</span>
+    </div>
 
         <div className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`}>
             {juego.completado ? '✅ COMPLETADO' : '⏳ PENDIENTE'}
