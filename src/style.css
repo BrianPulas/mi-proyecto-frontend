@@ -408,58 +408,39 @@ a:hover {
   color: var(--color-accent-blue);
   text-shadow: 2px 2px 0px #000;
 }
+/* --- (NUEVO) Estilo de Tags inspirado en Notion --- */
 
-/* ------------------------------------------- */
-/* CLASES RETRO ELIMINADAS */
-/* ------------------------------------------- */
-/* Se eliminaron las clases '.card' y '.retro-button' 
-  que estaban duplicadas al final, ya que sus estilos
-  se fusionaron con tus clases existentes 
-  ('.game-card', '.form-card', '.button', etc.)
-*/
-/* 1. Define el ciclo de colores */
-@keyframes neon-cycle {
-  0%, 100% { color: var(--primary-neon); /* Magenta */ }
-  25% { color: var(--secondary-neon); /* Cyan */ }
-  50% { color: var(--accent-neon); /* Verde */ }
-  75% { color: var(--yellow-neon); /* Amarillo */ }
-}
-
-/* 2. Estilos base del logo temático */
-.logo-link-themed {
+.game-card-tags {
   display: flex;
-  text-decoration: none;
-  font-size: 1.75rem; 
-  text-shadow: 2px 2px 0px #000;
-  image-rendering: pixelated;
+  flex-wrap: wrap; /* Para que bajen si no caben */
+  gap: 0.5rem; /* Espacio entre tags */
+  margin-bottom: 1rem;
 }
 
-/* 3. Aplica la animación a cada letra */
-.logo-link-themed span {
-  animation: neon-cycle 3s infinite linear;
-  transition: transform 0.2s;
+.game-tag {
+  /* Mantenemos tu fuente pixel */
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.65rem; /* Letra pequeña para las tags */
+  padding: 0.25rem 0.5rem;
+  
+  /* Color de fondo sutil (como Notion) */
+  background-color: var(--color-bg-input); /* Reusamos tu color de input */
+  
+  /* Borde neón sutil */
+  border: 1px solid var(--secondary-neon);
+  
+  color: var(--text);
+  border-radius: 0; /* Mantenemos tu estilo retro */
+  text-transform: uppercase;
 }
 
-/* 4. El espacio no se anima */
-.logo-space {
-  width: 0.5em;
-  animation: none;
+/* Colores diferentes para cada tag (¡opcional!) */
+.tag-genero {
+  border-color: var(--primary-neon); /* Magenta */
 }
-
-/* 5. ¡LA CLAVE! El retraso para cada letra */
-.logo-P { animation-delay: 0s; }
-.logo-L { animation-delay: 0.2s; }
-.logo-U { animation-delay: 0.4s; }
-.logo-S { animation-delay: 0.6s; }
-/* (el espacio no tiene) */
-.logo-U2 { animation-delay: 0.8s; }
-.logo-L2 { animation-delay: 1.0s; }
-.logo-T { animation-delay: 1.2s; }
-.logo-R { animation-delay: 1.4s; }
-.logo-A { animation-delay: 1.6s; }
-
-/* Efecto hover */
-.logo-link-themed span:hover {
-  transform: scale(1.2);
-  animation-play-state: paused; /* Pausa la animación al tocarla */
+.tag-plataforma {
+  border-color: var(--secondary-neon); /* Cyan */
+}
+.tag-año {
+  border-color: var(--accent-neon); /* Verde */
 }
