@@ -773,10 +773,15 @@ const App = () => {
     // --- Renderizado principal (Router simple) ---
     const renderContent = () => {
         switch (view) {
+            // --- ¡CAMBIO AQUÍ! ---
+            // Se usa "app-container" para centrar el formulario
             case 1:
-                return <div className="p-8"><FormularioJuego onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
+                return <div className="app-container"><FormularioJuego onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
+            
+            // --- ¡CAMBIO AQUÍ! ---
+            // Se usa "app-container" para centrar el formulario
             case 2:
-                return <div className="p-8"><FormularioJuego juegoInicial={juegoSeleccionado} onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
+                return <div className="app-container"><FormularioJuego juegoInicial={juegoSeleccionado} onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
             case 3:
                 return <DetalleJuego 
                             juego={juegoSeleccionado} 
@@ -793,8 +798,10 @@ const App = () => {
         }
     };
 
+    // --- ¡CAMBIO AQUÍ! ---
+    // Se corrigió el color de fondo para que coincida con el nuevo tema
     return (
-        <div className="min-h-screen font-sans" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-primary)' }}>
+        <div className="min-h-screen font-sans" style={{ background: 'var(--color-bg-main)', color: 'var(--color-text-primary)' }}>
             
             {/* --- (AÑADIDO) ---
             Aquí se renderiza el Navbar global.
