@@ -49,23 +49,16 @@
 
 /* El efecto de scanlines */
 .app-container::before {
-  content: "";
+  content: none; /* Desactiva el overlay para evitar pantalla negra */
   position: absolute;
   top: 0;
   left: 0;
+  /* mantenemos las reglas por compatibilidad, pero no se renderiza */
   width: 100%;
   height: 100%;
-
-  /* Crea líneas semitransparentes */
-  background: repeating-linear-gradient(
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.3) 3px,
-    rgba(0, 0, 0, 0.3) 4px
-  );
-
-  z-index: 1000; /* Por encima de todo */
-  pointer-events: none; /* Para que no bloquee los clics */
+  background: none;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Ajustar padding global para pantallas pequeñas */
@@ -73,4 +66,12 @@
   #root {
     padding: 1rem;
   }
+}
+
+/* Evita pequeños desbordes del overlay usando inset (más robusto) */
+.app-container::before {
+  inset: 0; /* reemplaza width/height por un inset completo */
+  width: auto;
+  height: auto;
+  box-sizing: border-box;
 }
