@@ -266,24 +266,21 @@ a:hover {
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px var(--color-shadow);
 }
-/* ...etc... */
 
 
 /* ------------------------------------------- */
 /* (¡MODIFICADO!) Contenedor de Login */
 /* ------------------------------------------- */
+/* REEMPLAZA CON ESTO: */
 .login-container {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  /* Resta la altura del navbar (aprox 60-70px) 
-     para centrarlo verticalmente en el espacio restante */
   min-height: calc(100vh - 70px); 
 
-  /* --- ¡AÑADIDO! --- */
-  /* ¡CAMBIA ESTA RUTA POR LA RUTA A TU IMAGEN! */
-  background-image: url('/src/assets/login-background.jpg'); 
+  /* ¡Esta es la ruta correcta! */
+  background-image: url('/login-background.jpg'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -32,7 +32,7 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
 );
 
 // --- (¡NUEVO!) Componente FormularioLogin ---
-const FormularioLogin = ({ onLogin, onGoToRegister }) => {
+function FormularioLogin({ onLogin, onGoToRegister }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

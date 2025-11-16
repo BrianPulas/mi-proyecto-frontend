@@ -68,7 +68,8 @@
   }
 }
 
-/* Evita pequeños desbordes del overlay usando inset (más robusto) */
+/* Eliminado: bloque duplicado de .app-container::before con inset */
+/* (Se mantiene solo la primera definición con content: none) */
 .app-container::before {
   inset: 0; /* reemplaza width/height por un inset completo */
   width: auto;
