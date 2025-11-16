@@ -31,6 +31,60 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
     </button>
 );
 
+// --- (¡NUEVO!) Componente FormularioLogin ---
+const FormularioLogin = ({ onLogin, onGoToRegister }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aquí llamarías a tu función de login
+    console.log("Iniciando sesión con:", email, password);
+    onLogin(); // Simulamos un login exitoso
+  };
+
+  return (
+    // --- ¡CAMBIO AQUÍ! Se añadió la clase "form-card-translucent" ---
+    <form onSubmit={handleSubmit} className="form-card form-card-translucent shadow-lg" style={{ maxWidth: '400px' }}>
+      <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
+        Iniciar Sesión
+      </h2>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <input
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+          className="input-field"
+        />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Contraseña"
+          required
+          className="input-field"
+        />
+        <Button type="submit" color="blue" style={{ width: '100%', marginTop: '0.5rem' }}>
+          Entrar
+        </Button>
+      </div>
+
+      <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
+        ¿No tienes cuenta?{' '}
+        <a href="#" onClick={(e) => { e.preventDefault(); onGoToRegister(); }}>
+          Regístrate
+        </a>
+      </p>
+    </form>
+  );
+};
+
+
 // --- (¡MODIFICADO!) Componente Navbar (Ahora con menú responsive) ---
 const Navbar = ({ onNavigate }) => {
   // 1. Añadimos estado para el menú
@@ -75,6 +129,12 @@ const Navbar = ({ onNavigate }) => {
             Estadísticas
           </a>
         </li>
+        {/* --- ¡AÑADIDO! Enlace de Login --- */}
+        <li>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(5); }} style={{color: 'var(--color-blue-text)'}}>
+            Iniciar Sesión
+          </a>
+        </li>
       </ul>
     </nav>
   );
@@ -82,7 +142,6 @@ const Navbar = ({ onNavigate }) => {
 
 
 // --- Componente TarjetaJuego ---
-// Reemplaza con esto:
 const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
     <div className="game-card shadow-lg">
         <img
@@ -92,7 +151,7 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
             onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
         />
         
-        {/* */}
+        {/* Contenedor con padding para el estilo dark mode */}
         <div style={{ padding: '1rem' }}>
             <h3 className="text-xl font-bold text-blue-400 truncate mb-1" style={{ color: 'var(--color-text-primary)' }}>{juego.titulo}</h3>
             <p className="text-sm text-gray-400 mb-2" style={{ color: 'var(--color-text-secondary)', opacity: 0.9 }}>
@@ -115,7 +174,6 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
                 </Button>
             </div>
         </div>
-        {/* */}
         
     </div>
 );
@@ -153,7 +211,10 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
 
     return (
         <form onSubmit={handleSubmit} className="form-card shadow-lg">
-            <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-accent-blue)' }}>{isEdit ? 'Editar Juego' : 'Añadir Nuevo Juego'}</h2>
+            {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+            <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
+              {isEdit ? 'Editar Juego' : 'Añadir Nuevo Juego'}
+            </h2>
 
             <div className="form-grid">
                 <input
@@ -224,7 +285,7 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                     checked={juego.completado}
                     onChange={handleChange}
                     id="completado"
-                    style={{ height: '1.25rem', width: '1.25rem', accentColor: 'var(--color-accent-blue)' }}
+                    style={{ height: '1.25rem', width: '1.25rem', accentColor: 'var(--color-blue-text)' }}
                 />
                 <label htmlFor="completado" style={{ color: 'var(--color-text-primary)' }}>Marcar como Completado</label>
             </div>
@@ -294,7 +355,6 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
     };
 
     const handleDeleteReview = async (reviewId) => {
-        // En un proyecto real, se usaría un modal/diálogo personalizado.
         if (!window.confirm("¿Estás seguro de que quieres eliminar esta reseña?")) return;
         setLoading(true);
         try {
@@ -335,10 +395,10 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
 
         return (
             <form onSubmit={handleSubmit} className="review-form space-y-3">
-                <h4 className="text-xl font-semibold" style={{ color: '#93c5fd' }}>{isEdit ? 'Editar Reseña' : 'Escribir Nueva Reseña'}</h4>
+                <h4 className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>{isEdit ? 'Editar Reseña' : 'Escribir Nueva Reseña'}</h4>
                 
                 <div className="flex items-center space-x-4">
-                    <label style={{ color: 'var(--color-text-primary)', opacity: 0.8 }}>Puntuación:</label>
+                    <label style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>Puntuación:</label>
                     <input
                         type="number"
                         name="puntuacion"
@@ -352,7 +412,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                    <label style={{ color: 'var(--color-text-primary)', opacity: 0.8 }}>Horas Jugadas:</label>
+                    <label style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>Horas Jugadas:</label>
                     <input
                         type="number"
                         name="horasJugadas"
@@ -365,7 +425,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                    <label style={{ color: 'var(--color-text-primary)', opacity: 0.8 }}>Dificultad:</label>
+                    <label style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>Dificultad:</label>
                     <select name="dificultad" value={review.dificultad} onChange={handleChange} className="select-field" style={{ width: '8rem', padding: '0.5rem' }}>
                         <option value="Fácil">Fácil</option>
                         <option value="Normal">Normal</option>
@@ -374,8 +434,8 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                 </div>
                 
                 <div className="checkbox-group">
-                    <input type="checkbox" name="recomendaria" checked={review.recomendaria} onChange={handleChange} id="recomendaria" style={{ height: '1rem', width: '1rem', accentColor: 'var(--color-accent-blue)' }}/>
-                    <label htmlFor="recomendaria" style={{ color: 'var(--color-text-primary)', opacity: 0.8 }}>¿Lo recomendarías?</label>
+                    <input type="checkbox" name="recomendaria" checked={review.recomendaria} onChange={handleChange} id="recomendaria" style={{ height: '1rem', width: '1rem', accentColor: 'var(--color-blue-text)' }}/>
+                    <label htmlFor="recomendaria" style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>¿Lo recomendarías?</label>
                 </div>
                 
                 <textarea
@@ -410,7 +470,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                     </span>
                 </div>
                 <p style={{ color: 'var(--color-text-primary)', opacity: 0.9 }} className="italic mb-3">"{reseña.textoReseña}"</p>
-                <div className="text-sm" style={{ color: 'var(--color-text-primary)', opacity: 0.6 }}>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)', opacity: 0.6 }}>
                     <p style={{ marginBottom: '0.25rem' }}>Horas Jugadas: <span style={{ color: 'var(--color-text-primary)', fontWeight: '500' }}>{reseña.horasJugadas}</span></p>
                     <p>Dificultad: <span style={{ color: 'var(--color-text-primary)', fontWeight: '500' }}>{reseña.dificultad}</span></p>
                 </div>
@@ -426,23 +486,22 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
         <div className="detail-layout">
             {/* Columna de Imagen y Info */}
             <div className="lg-col-span-1">
-                {/* --- (NOTA) ---
-                    He movido el botón de "Volver" al componente EstadisticasPersonales
-                    y al de DetalleJuego (aquí abajo) para que no esté en el Navbar principal
-                */}
                 <Button onClick={onBack} color="blue" style={{ marginBottom: '1.5rem', width: '100%' }}>← Volver a la Biblioteca</Button>
                 
                 <img
                     src={juego.imagenPortada}
                     alt={juego.titulo}
                     className="w-full h-auto object-cover rounded-xl shadow-xl"
-                    style={{ border: '4px solid var(--color-accent-blue)' }}
+                    // --- (MODIFICADO) Limpiado estilo en línea ---
+                    style={{ border: '1px solid var(--color-border)' }}
                     onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
                 />
                 <div className="detail-sidebar-content" style={{ marginTop: '1rem' }}>
-                    <h2 className="text-3xl font-extrabold text-white">{juego.titulo}</h2>
-                    <p style={{ color: 'var(--color-text-primary)', opacity: 0.6, marginTop: '0.25rem' }}>{juego.desarrollador} • {juego.añoLanzamiento}</p>
-                    <p className="game-status" style={{ marginTop: '0.5rem', background: juego.completado ? 'var(--color-accent-green)' : 'var(--color-accent-yellow)' }}>
+                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                    <h2 className="text-3xl font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{juego.titulo}</h2>
+                    <p style={{ color: 'var(--color-text-secondary)', opacity: 0.8, marginTop: '0.25rem' }}>{juego.desarrollador} • {juego.añoLanzamiento}</p>
+                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                    <p className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`} style={{ marginTop: '0.5rem' }}>
                         {juego.completado ? 'COMPLETADO' : 'PENDIENTE'}
                     </p>
                     <div className="flex space-x-2" style={{ marginTop: '0.75rem' }}>
@@ -459,7 +518,8 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             {/* Columna de Descripción y Reseñas */}
             <div className="lg-col-span-2">
                 <h3 className="secondary-title mb-2">Descripción</h3>
-                <p style={{ color: 'var(--color-text-primary)' }} className="p-4 rounded-lg shadow-inner bg-gray-800">
+                {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                <p style={{ color: 'var(--color-text-primary)', backgroundColor: 'var(--color-bg-input)' }} className="p-4 rounded-lg shadow-inner">
                     {juego.descripcion || "No se ha proporcionado una descripción."}
                 </p>
 
@@ -469,7 +529,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                 </div>
                 
                 {error && <div style={{ background: 'var(--color-accent-red)', padding: '0.75rem', color: 'white', borderRadius: '0.5rem', marginBottom: '1rem' }}>Error: {error}</div>}
-                {loading && <div style={{ color: 'var(--color-accent-blue)', textAlign: 'center' }}>Cargando reseñas...</div>}
+                {loading && <div style={{ color: 'var(--color-blue-text)', textAlign: 'center' }}>Cargando reseñas...</div>}
                 
                 {isAddingReview && (
                     <ReviewForm 
@@ -482,7 +542,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                     {reseñas.length > 0 ? (
                         reseñas.map(r => <ReviewCard key={r._id} reseña={r} />)
                     ) : (
-                        <p style={{ color: 'var(--color-text-primary)', opacity: 0.6, fontStyle: 'italic', padding: '1rem', background: 'var(--color-bg-card)', borderRadius: '0.5rem' }}>Sé el primero en reseñar este juego.</p>
+                        <p style={{ color: 'var(--color-text-secondary)', opacity: 0.8, fontStyle: 'italic', padding: '1rem', background: 'var(--color-bg-card)', borderRadius: '0.5rem' }}>Sé el primero en reseñar este juego.</p>
                     )}
                 </div>
             </div>
@@ -511,30 +571,34 @@ const EstadisticasPersonales = ({ juegos, onBack }) => {
                 
                 {/* Tarjeta 1: Total de Juegos */}
                 <div className="stats-card stats-card-border-blue">
-                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'white' }}>{totalJuegos}</p>
-                    <p style={{ color: 'var(--color-text-primary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos en Biblioteca</p>
+                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{totalJuegos}</p>
+                    <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos en Biblioteca</p>
                 </div>
 
                 {/* Tarjeta 2: Juegos Completados */}
                 <div className="stats-card stats-card-border-green">
-                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'white' }}>{completados}</p>
-                    <p style={{ color: 'var(--color-text-primary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos Completados</p>
+                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{completados}</p>
+                    <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos Completados</p>
                 </div>
                 
                 {/* Tarjeta 3: Porcentaje Completado */}
                 <div className="stats-card stats-card-border-yellow">
-                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'white' }}>{porcentajeCompletado}%</p>
-                    <p style={{ color: 'var(--color-text-primary)', opacity: 0.7, marginTop: '0.5rem' }}>Progreso General</p>
+                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{porcentajeCompletado}%</p>
+                    <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Progreso General</p>
                 </div>
             </div>
 
             <div className="stats-card" style={{ marginTop: '2rem', textAlign: 'left' }}>
                 <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Plataforma</h3>
-                <ul className="stats-list" style={{ color: 'var(--color-text-primary)' }}>
+                <ul className="stats-list" style={{ color: 'var(--color-text-secondary)' }}>
                     {Object.entries(plataformaCount).map(([plataforma, count]) => (
                         <li key={plataforma}>
                             <span>🎮 {plataforma}</span>
-                            <span style={{ fontWeight: '700', color: 'white' }}>{count}</span>
+                            {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
+                            <span style={{ fontWeight: '700', color: 'var(--color-text-primary)' }}>{count}</span>
                         </li>
                     ))}
                 </ul>
@@ -544,7 +608,15 @@ const EstadisticasPersonales = ({ juegos, onBack }) => {
                 <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Géneros Rastreados</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {generos.map(g => (
-                        <span key={g} style={{ background: '#9333ea', color: 'white', fontSize: '0.875rem', fontWeight: '500', padding: '0.25rem 0.75rem', borderRadius: '9999px' }}>
+                        // --- (MODIFICADO) Limpiado estilo en línea ---
+                        <span key={g} style={{ 
+                          background: 'var(--color-blue-bg)', 
+                          color: 'var(--color-blue-text)', 
+                          fontSize: '0.875rem', 
+                          fontWeight: '500', 
+                          padding: '0.25rem 0.75rem', 
+                          borderRadius: '9999px' 
+                        }}>
                             {g}
                         </span>
                     ))}
@@ -556,7 +628,7 @@ const EstadisticasPersonales = ({ juegos, onBack }) => {
 
 // --- Componente principal App ---
 const App = () => {
-    // 0: Biblioteca, 1: Agregar Juego, 2: Editar Juego, 3: Detalle/Reseñas, 4: Estadísticas
+    // 0: Biblioteca, 1: Agregar Juego, 2: Editar Juego, 3: Detalle/Reseñas, 4: Estadísticas, 5: Login
     const [view, setView] = useState(0); 
     const [juegos, setJuegos] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -689,11 +761,6 @@ const App = () => {
 
         return (
             <div className="app-container">
-                {/* --- (ELIMINADO) ---
-                El <header> que estaba aquí fue eliminado
-                porque el Navbar global ahora lo reemplaza.
-                */}
-
                 {/* Área de Filtros y Búsqueda */}
                 <div className="form-card shadow-lg" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
                     <input
@@ -702,7 +769,7 @@ const App = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="input-field"
-                        style={{ marginBottom: '1am' }}
+                        style={{ marginBottom: '1rem' }} // Corregido de '1am' a '1rem'
                     />
                     <div className="form-grid">
                         <select
@@ -743,8 +810,8 @@ const App = () => {
                 </div>
 
                 {/* Mostrar Estado */}
-                {loading && <div style={{ fontSize: '1.25rem', color: 'var(--color-accent-blue)', textAlign: 'center', padding: '2.5rem 0' }}>Cargando biblioteca...</div>}
-                {error && <div style={{ fontSize: '1.25rem', color: 'var(--color-accent-red)', textAlign: 'center', padding: '2.5rem 0' }}>¡Error de conexión! {error}</div>}
+                {loading && <div style={{ fontSize: '1.25rem', color: 'var(--color-blue-text)', textAlign: 'center', padding: '2.5rem 0' }}>Cargando biblioteca...</div>}
+                {error && <div style={{ fontSize: '1.25rem', color: 'var(--color-red-text)', textAlign: 'center', padding: '2.5rem 0' }}>¡Error de conexión! {error}</div>}
                 
                 {/* Lista de Juegos */}
                 {!loading && !error && (
@@ -762,7 +829,7 @@ const App = () => {
                         </div>
                     ) : (
                         <div className="form-card shadow-lg" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
-                            <p style={{ fontSize: '1.5rem', color: 'var(--color-text-primary)', opacity: 0.7 }}>Tu biblioteca está vacía o no coincide con los filtros. ¡Añade tu primer juego!</p>
+                            <p style={{ fontSize: '1.5rem', color: 'var(--color-text-secondary)', opacity: 0.7 }}>Tu biblioteca está vacía o no coincide con los filtros. ¡Añade tu primer juego!</p>
                         </div>
                     )
                 )}
@@ -773,13 +840,11 @@ const App = () => {
     // --- Renderizado principal (Router simple) ---
     const renderContent = () => {
         switch (view) {
-            // --- ¡CAMBIO AQUÍ! ---
-            // Se usa "app-container" para centrar el formulario
+            // --- ¡MODIFICADO! Se usa "app-container" para centrar el formulario
             case 1:
                 return <div className="app-container"><FormularioJuego onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
             
-            // --- ¡CAMBIO AQUÍ! ---
-            // Se usa "app-container" para centrar el formulario
+            // --- ¡MODIFICADO! Se usa "app-container" para centrar el formulario
             case 2:
                 return <div className="app-container"><FormularioJuego juegoInicial={juegoSeleccionado} onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
             case 3:
@@ -792,21 +857,29 @@ const App = () => {
                         />;
             case 4:
                 return <EstadisticasPersonales juegos={juegos} onBack={() => setView(0)} />;
+
+            // --- ¡AÑADIDO! Case para el Login ---
+            case 5:
+              return (
+                // Usamos un 'login-container' para centrarlo verticalmente
+                <div className="login-container">
+                  <FormularioLogin 
+                    onLogin={() => setView(0)} // Al loguearse, vuelve a la home
+                    onGoToRegister={() => alert('Ir a la página de registro')} // (Puedes crear un case 6 para esto)
+                  />
+                </div>
+              );
+
             case 0:
             default:
                 return <BibliotecaJuegos />;
         }
     };
 
-    // --- ¡CAMBIO AQUÍ! ---
-    // Se corrigió el color de fondo para que coincida con el nuevo tema
+    // --- ¡MODIFICADO! Se corrigió el color de fondo para que coincida con el nuevo tema dark
     return (
         <div className="min-h-screen font-sans" style={{ background: 'var(--color-bg-main)', color: 'var(--color-text-primary)' }}>
             
-            {/* --- (AÑADIDO) ---
-            Aquí se renderiza el Navbar global.
-            Le pasamos 'setView' como la prop 'onNavigate'.
-            */}
             <Navbar onNavigate={setView} />
             
             {/* Aquí se renderiza el contenido de la vista actual */}

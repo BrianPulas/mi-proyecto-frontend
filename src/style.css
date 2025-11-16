@@ -1,17 +1,17 @@
 /* ------------------------------------------- */
-/* Estilos Base y Variables (TEMA MINIMALISTA) */
+/* Estilos Base y Variables (TEMA DARK MODE) */
 /* ------------------------------------------- */
 :root {
-  /* Paleta de Colores Limpia */
-  --color-bg-main: #fcfcfc;       /* Fondo general (casi blanco) */
-  --color-bg-card: #FFFFFF;      /* Fondo de tarjetas (blanco puro) */
-  --color-bg-input: #f7f7f7;     /* Fondo de inputs */
-  --color-text-primary: #333333; /* Texto principal (gris oscuro) */
-  --color-text-secondary: #777777;/* Texto sutil */
-  --color-border: #EAEAEA;      /* Borde suave */
-  --color-shadow: rgba(0, 0, 0, 0.05);
+  /* Paleta de Colores Dark Mode */
+  --color-bg-main: #121212;       /* Fondo general (Negro) */
+  --color-bg-card: #1E1E1E;       /* Fondo de tarjetas (Gris oscuro) */
+  --color-bg-input: #2a2a2a;      /* Fondo de inputs */
+  --color-text-primary: #E0E0E0;  /* Texto principal (casi blanco) */
+  --color-text-secondary: #888888; /* Texto sutil */
+  --color-border: #333333;       /* Borde suave */
+  --color-shadow: rgba(0, 0, 0, 0.2);
   
-  /* Colores de Tags (Pastel) */
+  /* Colores de Tags (Pastel) - Estos se ven bien en dark mode */
   --color-green-bg: #e0f8e3;
   --color-green-text: #0c6b58;
   --color-yellow-bg: #fff3db;
@@ -23,27 +23,21 @@
 }
 
 body {
-  /* 1. FUENTE: Usamos la fuente del sistema (moderna) */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  
-  /* 2. COLORES: Paleta clara */
   background-color: var(--color-bg-main);
   color: var(--color-text-primary);
-  
-  /* 3. ANTI-ALIASING: Hace la fuente más suave */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 4. ¡ELIMINAR SCANLINES! Esta regla debe estar VACÍA */
 body::before {
-  content: none;
+  content: none; /* Nos aseguramos de borrar las scanlines */
 }
 
 /* Títulos y Enlaces Base */
 h1, h2, h3, h4, h5, h6 {
-  text-shadow: none; /* Quitamos la sombra pixel */
-  color: #000;
+  text-shadow: none;
+  color: var(--color-text-primary); /* Texto claro */
 }
 a {
   color: var(--color-blue-text);
@@ -66,7 +60,6 @@ a:hover {
 }
 
 .shadow-lg {
-  /* Sombra suave de Notion */
   box-shadow: 0 4px 12px var(--color-shadow);
 }
 
@@ -74,54 +67,39 @@ a:hover {
   border-radius: 0.75rem; /* 12px */
 }
 
-/* Botón Minimalista */
+/* Botón Minimalista (ya funciona bien con el estilo anterior) */
 .button {
-  font-family: inherit; /* Usa la fuente del sistema */
+  font-family: inherit;
   padding: 10px 16px;
   color: #FFFFFF;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-transform: none; /* Quitamos mayúsculas */
+  text-transform: none;
   cursor: pointer;
-  border-radius: 6px; /* Bordes suaves */
+  border-radius: 6px;
   transition: all 0.2s;
   font-weight: 500;
 }
-
 .button:active {
   transform: scale(0.98);
   box-shadow: none;
 }
-
-/* Colores de botones */
-.button-blue { 
-  background-color: #0d6efd; 
-  color: white;
-}
+.button-blue { background-color: #0d6efd; color: white; }
 .button-blue:hover { background-color: #0b5ed7; }
-
-.button-green { 
-  background-color: #198754; 
-  color: white;
-}
+.button-green { background-color: #198754; color: white; }
 .button-green:hover { background-color: #157347; }
-
-.button-red { 
-  background-color: #dc3545; 
-  color: white;
-}
+.button-red { background-color: #dc3545; color: white; }
 .button-red:hover { background-color: #bb2d3b; }
 
 
 /* ------------------------------------------- */
-/* Formularios y Campos */
+/* Formularios y Campos (Dark) */
 /* ------------------------------------------- */
-/* La form-card ya está centrada; verifica que mantenga centrado */
 .form-card {
   background-color: var(--color-bg-card);
   padding: 1.5rem;
   border-radius: 12px;
-  max-width: 1100px;
+  max-width: 800px;
   margin: 0 auto;
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px var(--color-shadow);
@@ -143,12 +121,12 @@ a:hover {
 .textarea-field {
   padding: 0.75rem;
   background-color: var(--color-bg-input);
-  color: var(--color-text-primary);
+  color: var(--color-text-primary); /* Texto claro */
   border-radius: 6px;
   border: 1px solid var(--color-border);
   width: 100%;
   box-sizing: border-box;
-  font-family: inherit; /* Fuente del sistema */
+  font-family: inherit;
   font-size: 0.9rem;
 }
 .input-field:focus,
@@ -164,7 +142,7 @@ a:hover {
 }
 
 /* ------------------------------------------- */
-/* Tarjeta de Juego (Estilo Notion) */
+/* Tarjeta de Juego (Dark) */
 /* ------------------------------------------- */
 .game-grid {
   display: grid;
@@ -174,12 +152,10 @@ a:hover {
 
 .game-card {
   background-color: var(--color-bg-card);
-  border-radius: 12px; /* Bordes redondeados */
+  border-radius: 12px;
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px var(--color-shadow);
   transition: all 0.2s;
-  
-  /* Importante: Sin padding, para que la imagen quede pegada arriba */
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -187,49 +163,29 @@ a:hover {
 .game-card:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-4px);
+  border-color: #444;
 }
 
 .game-card-img {
   width: 100%;
   height: 12rem;
   object-fit: cover;
-  /* Bordes redondeados SÓLO arriba */
   border-radius: 12px 12px 0 0; 
   margin-bottom: 0;
-  border: none;
+  border-bottom: 1px solid var(--color-border); /* Separador */
 }
 
-/* --- (OPCIONAL) ---
-  Si no quieres modificar tu App.jsx, descomenta este
-  bloque para añadir padding a todo MENOS la imagen
-*/
-/*
-.game-card > *:not(.game-card-img) {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.game-card h3 {
-  padding-top: 1rem;
-}
-.card-button-group {
-  padding-bottom: 1rem;
-}
-*/
-/* --- Fin Opcional --- */
-
-
-/* --- Estilo de Tags/Pills (¡CLAVE!) --- */
+/* Estilo de Tags/Pills (Se ven bien en dark mode) */
 .game-status {
-  font-family: inherit; /* Fuente del sistema */
+  font-family: inherit;
   padding: 0.25rem 0.75rem;
-  border-radius: 999px; /* Totalmente redondo */
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 500;
   width: fit-content;
   margin-bottom: 1rem;
-  text-transform: none; /* Sin mayúsculas */
+  text-transform: none;
 }
-
 .game-status-completed {
   background-color: var(--color-green-bg);
   color: var(--color-green-text);
@@ -238,7 +194,6 @@ a:hover {
   background-color: var(--color-yellow-bg);
   color: var(--color-yellow-text);
 }
-/* (Puedes añadir más si quieres) */
 
 .card-button-group {
   margin-top: 1rem;
@@ -248,7 +203,7 @@ a:hover {
 }
 
 /* ------------------------------------------- */
-/* Vista de Detalle y Reseñas */
+/* Vista de Detalle (Dark) */
 /* ------------------------------------------- */
 .detail-layout {
   display: grid;
@@ -256,17 +211,15 @@ a:hover {
   gap: 1.5rem;
   max-width: 900px;
   margin: 0 auto;
-  background-color: transparent; /* Sin fondo */
+  /* Reseteamos estilos anteriores */
+  background-color: transparent;
   padding: 0;
   border-radius: 0;
   border: none;
   box-shadow: none;
 }
-
 @media (min-width: 1024px) {
-  .detail-layout {
-    grid-template-columns: 1fr 2fr;
-  }
+  .detail-layout { grid-template-columns: 1fr 2fr; }
 }
 
 .detail-sidebar-content {
@@ -292,7 +245,7 @@ a:hover {
 }
 
 /* ------------------------------------------- */
-/* Dashboard de Estadísticas */
+/* Dashboard (Dark) */
 /* ------------------------------------------- */
 .stats-grid {
   display: grid;
@@ -313,8 +266,38 @@ a:hover {
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px var(--color-shadow);
 }
-.stats-card-border-blue { border-top: 4px solid #0d6efd; }
-.stats-card-border-green { border-top: 4px solid #198754; }
-.stats-card-border-yellow { border-top: 4px solid #ffc107; }
+/* ...etc... */
 
-/* ... (el resto de clases de stats, etc. heredarán bien) */
+
+/* ------------------------------------------- */
+/* (¡MODIFICADO!) Contenedor de Login */
+/* ------------------------------------------- */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  /* Resta la altura del navbar (aprox 60-70px) 
+     para centrarlo verticalmente en el espacio restante */
+  min-height: calc(100vh - 70px); 
+
+  /* --- ¡AÑADIDO! --- */
+  /* ¡CAMBIA ESTA RUTA POR LA RUTA A TU IMAGEN! */
+  background-image: url('/src/assets/login-background.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* --- (¡NUEVO!) Clase para formulario translúcido --- */
+.form-card-translucent {
+  /* Fondo oscuro con 75% de opacidad */
+  background-color: rgba(30, 30, 30, 0.75); /* Es tu --color-bg-card, pero con transparencia */
+  
+  /* Efecto "Vidrio Esmerilado" (Blur) */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Para Safari */
+  
+  /* Borde sutil para destacarlo del fondo */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

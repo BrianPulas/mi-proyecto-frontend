@@ -1,26 +1,30 @@
-/* --- (NUEVO) Navbar.css con Responsive (Menú Hamburguesa) --- */
+/* --- (NUEVO) Navbar.css (Dark Mode) --- */
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
+  
+  /* Fondo de tarjeta y borde sutil */
   background-color: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border);
+  
+  box-shadow: none;
   position: relative;
   z-index: 10;
 }
 
-/* Estilo del logo (texto simple) */
+/* Estilo del logo */
 .navbar-logo a {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: 700;
   font-size: 1.5rem; 
-  color: var(--color-text-primary);
+  color: var(--color-text-primary); /* Texto claro */
   text-decoration: none;
 }
 .navbar-logo a:hover {
-  color: #000;
+  color: #fff;
 }
 
 /* --- Estilos del Menú en ESCRITORIO --- */
@@ -30,17 +34,18 @@
   gap: 1.5rem;
   margin: 0;
   padding: 0;
+  align-items: center; /* Para alinear el botón de login */
 }
 
 .navbar-links a {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary); /* Texto gris sutil */
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
   padding: 0.5rem;
   border-radius: 6px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .navbar-links a:hover {
@@ -49,7 +54,7 @@
   text-decoration: none;
 }
 
-/* Botón Hamburguesa (Oculto en escritorio) */
+/* Botón Hamburguesa */
 .navbar-toggle {
   display: none;
   background: transparent;
@@ -62,24 +67,19 @@
   display: block;
   width: 25px;
   height: 3px;
-  background-color: var(--color-text-primary);
+  background-color: var(--color-text-primary); /* Barras claras */
   margin: 5px 0;
   transition: all 0.3s;
 }
 
 /* --- Estilos para MÓVIL --- */
 @media (max-width: 768px) {
-  /* Muestra el botón de hamburguesa */
   .navbar-toggle {
     display: block;
   }
 
-  /* Oculta los enlaces */
   .navbar-links {
-    /* Ocultos por defecto */
     display: none; 
-    
-    /* Cuando se activen, ocuparán toda la pantalla */
     position: absolute;
     top: 0;
     left: 0;
@@ -87,20 +87,18 @@
     height: 100vh;
     padding-top: 5rem;
     
-    background-color: var(--color-bg-card);
+    background-color: var(--color-bg-card); /* Fondo oscuro */
     
-    /* Se ordenan en columna */
     flex-direction: column;
     align-items: center;
     gap: 2rem;
   }
   
-  /* Cuando el menú está abierto, se muestra */
   .navbar-links.active {
     display: flex;
   }
   
   .navbar-links a {
-    font-size: 1.5rem; /* Letras más grandes en el menú móvil */
+    font-size: 1.5rem;
   }
 }
