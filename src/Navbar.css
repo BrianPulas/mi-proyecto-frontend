@@ -4,30 +4,30 @@
   align-items: center;
   padding: 1rem 2rem;
   
-  /* Usamos los colores de la paleta retro */
+  /* Fondo blanco y borde sutil */
   background-color: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border);
   
-  /* Borde inferior estilo retro */
-  border-bottom: 4px solid var(--primary-neon);
-  box-shadow: 0px 4px 0px var(--primary-neon);
+  /* Quitamos el borde/sombra retro */
+  box-shadow: none;
   
-  /* Asegura que esté sobre el contenido pero debajo de las scanlines */
   position: relative;
   z-index: 10;
 }
 
-.navbar-logo {
-  font-size: 1.5rem; /* 24px */
-}
-
+/* Estilo del logo (texto simple) */
 .navbar-logo a {
-  color: var(--primary-neon);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem; 
+  color: var(--color-text-primary);
   text-decoration: none;
 }
 .navbar-logo a:hover {
-  color: var(--accent-neon);
+  color: #000;
 }
 
+/* Estilo de enlaces */
 .navbar-links {
   display: flex;
   list-style: none;
@@ -36,15 +36,19 @@
   padding: 0;
 }
 
-/* Estilo de los enlaces del navbar */
 .navbar-links a {
-  color: var(--secondary-neon);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--color-text-secondary);
   text-decoration: none;
-  font-size: 1rem; /* 16px */
+  font-size: 1rem;
+  font-weight: 500;
   padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
 }
 
 .navbar-links a:hover {
-  color: var(--accent-neon);
-  text-decoration: underline;
+  background-color: var(--color-bg-input);
+  color: var(--color-text-primary);
+  text-decoration: none;
 }

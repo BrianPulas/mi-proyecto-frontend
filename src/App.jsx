@@ -58,6 +58,7 @@ const Navbar = ({ onNavigate }) => (
 );
 
 // --- Componente TarjetaJuego ---
+// Reemplaza con esto:
 const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
     <div className="game-card shadow-lg">
         <img
@@ -66,29 +67,32 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
             className="game-card-img"
             onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
         />
-        <h3 className="text-xl font-bold text-blue-400 truncate mb-1" style={{ color: 'var(--color-accent-blue)' }}>{juego.titulo}</h3>
-        // Reemplaza con esto:
-    <div className="game-card-tags">
-      <span className="game-tag tag-genero">{juego.genero}</span>
-      <span className="game-tag tag-plataforma">{juego.plataforma}</span>
-      <span className="game-tag tag-año">{juego.añoLanzamiento}</span>
-    </div>
+        
+        {/* */}
+        <div style={{ padding: '1rem' }}>
+            <h3 className="text-xl font-bold text-blue-400 truncate mb-1" style={{ color: 'var(--color-text-primary)' }}>{juego.titulo}</h3>
+            <p className="text-sm text-gray-400 mb-2" style={{ color: 'var(--color-text-secondary)', opacity: 0.9 }}>
+                {juego.genero} • {juego.plataforma} ({juego.añoLanzamiento})
+            </p>
 
-        <div className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`}>
-            {juego.completado ? '✅ COMPLETADO' : '⏳ PENDIENTE'}
-        </div>
+            <div className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`}>
+                {juego.completado ? 'COMPLETADO' : 'PENDIENTE'}
+            </div>
 
-        <div className="card-button-group">
-            <Button onClick={() => onViewDetails(juego)} color="blue">
-                Ver Detalles / Reseñas
-            </Button>
-            <Button onClick={() => onToggleComplete(juego)} color={juego.completado ? 'red' : 'green'}>
-                {juego.completado ? 'Marcar como Pendiente' : 'Marcar como Completado'}
-            </Button>
-            <Button onClick={() => onEdit(juego)} color="blue">
-                Editar
-            </Button>
+            <div className="card-button-group">
+                <Button onClick={() => onViewDetails(juego)} color="blue">
+                    Ver Detalles / Reseñas
+                </Button>
+                <Button onClick={() => onToggleComplete(juego)} color={juego.completado ? 'red' : 'green'}>
+                    {juego.completado ? 'Marcar como Pendiente' : 'Marcar como Completado'}
+                </Button>
+                <Button onClick={() => onEdit(juego)} color="blue">
+                    Editar
+                </Button>
+            </div>
         </div>
+        {/* */}
+        
     </div>
 );
 

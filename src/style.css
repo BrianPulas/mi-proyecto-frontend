@@ -1,81 +1,55 @@
 /* ------------------------------------------- */
-/* Estilos Base y Variables CSS (TEMA RETRO) */
+/* Estilos Base y Variables (TEMA MINIMALISTA) */
 /* ------------------------------------------- */
 :root {
-  /* Paleta Neon */
-  --background: #0a0a0a;
-  --text: #f0f0f0;
-  --primary-neon: #ff00ff; /* Magenta */
-  --secondary-neon: #00ffff; /* Cyan */
-  --accent-neon: #00ff00; /* Verde Lima */
-  --yellow-neon: #ffff00;
-  --red-neon: #ff3333;
-
-  /* --- Mapeo a las variables de tu proyecto --- */
-  --color-bg-dark: var(--background);
-  --color-bg-card: #1a1a1a;
-  --color-bg-input: #222;
-  --color-border: var(--primary-neon); /* Borde principal */
-
-  /* Colores de acento */
-  --color-accent-blue: var(--secondary-neon);
-  --color-accent-green: var(--accent-neon);
-  --color-accent-red: var(--red-neon);
-  --color-accent-yellow: var(--yellow-neon);
+  /* Paleta de Colores Limpia */
+  --color-bg-main: #fcfcfc;       /* Fondo general (casi blanco) */
+  --color-bg-card: #FFFFFF;      /* Fondo de tarjetas (blanco puro) */
+  --color-bg-input: #f7f7f7;     /* Fondo de inputs */
+  --color-text-primary: #333333; /* Texto principal (gris oscuro) */
+  --color-text-secondary: #777777;/* Texto sutil */
+  --color-border: #EAEAEA;      /* Borde suave */
+  --color-shadow: rgba(0, 0, 0, 0.05);
+  
+  /* Colores de Tags (Pastel) */
+  --color-green-bg: #e0f8e3;
+  --color-green-text: #0c6b58;
+  --color-yellow-bg: #fff3db;
+  --color-yellow-text: #7a590f;
+  --color-blue-bg: #ddebf8;
+  --color-blue-text: #2a5a95;
+  --color-red-bg: #ffe2e0;
+  --color-red-text: #8c2e28;
 }
 
 body {
-  font-family: 'Press Start 2P', cursive;
-  background-color: var(--color-bg-card); 
-  color: var(--text);
-
-  /* Evita que las fuentes pixel se vean borrosas */
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  /* 1. FUENTE: Usamos la fuente del sistema (moderna) */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   
-  /* Para el efecto Scanlines */
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
+  /* 2. COLORES: Paleta clara */
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
+  
+  /* 3. ANTI-ALIASING: Hace la fuente más suave */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Efecto "Scanlines" de TV Vieja */
+/* 4. ¡ELIMINAR SCANLINES! Esta regla debe estar VACÍA */
 body::before {
-  content: "";
-  position: fixed; /* Fijo para que cubra todo */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  
-  /* Crea líneas semitransparentes */
-  background: repeating-linear-gradient(
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.3) 3px,
-    rgba(0, 0, 0, 0.3) 4px
-  );
-  
-  z-index: 1000; /* Por encima de todo */
-  pointer-events: none; /* Para que no bloquee los clics */
+  content: none;
 }
-
 
 /* Títulos y Enlaces Base */
 h1, h2, h3, h4, h5, h6 {
-  text-shadow: 2px 2px 0px #000;
+  text-shadow: none; /* Quitamos la sombra pixel */
+  color: #000;
 }
-h1 { color: var(--primary-neon); }
-h2 { color: var(--secondary-neon); }
-h3 { color: var(--accent-neon); }
-
 a {
-  color: var(--secondary-neon);
+  color: var(--color-blue-text);
   text-decoration: none;
 }
 a:hover {
-  color: var(--accent-neon);
   text-decoration: underline;
 }
 
@@ -87,49 +61,56 @@ a:hover {
   padding: 2rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
-  /* z-index y position para estar sobre las scanlines */
   position: relative;
   z-index: 1;
 }
 
-/* Sombra Retro */
 .shadow-lg {
-  box-shadow: 8px 8px 0px var(--secondary-neon);
+  /* Sombra suave de Notion */
+  box-shadow: 0 4px 12px var(--color-shadow);
 }
 
-/* Bordes Retro (Sin redondeo) */
 .rounded-xl {
-  border-radius: 0;
+  border-radius: 0.75rem; /* 12px */
 }
 
-/* Botón Retro (Fusionado con tu clase .button) */
+/* Botón Minimalista */
 .button {
-  font-family: 'Press Start 2P', cursive;
-  padding: 12px 20px;
-  color: #000; /* Texto negro sobre fondo neon */
-  border: 3px solid #000;
-  box-shadow: 4px 4px 0px #000;
-  text-transform: uppercase;
+  font-family: inherit; /* Usa la fuente del sistema */
+  padding: 10px 16px;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-transform: none; /* Quitamos mayúsculas */
   cursor: pointer;
-  border-radius: 0; /* ¡Estilo retro! */
-  transition: transform 0.1s, box-shadow 0.1s;
+  border-radius: 6px; /* Bordes suaves */
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
-/* Efecto de "presionado" */
 .button:active {
+  transform: scale(0.98);
   box-shadow: none;
-  transform: translate(4px, 4px);
 }
 
 /* Colores de botones */
-.button-blue { background-color: var(--color-accent-blue); }
-.button-blue:hover { background-color: #33ffff; } /* Cyan más claro */
+.button-blue { 
+  background-color: #0d6efd; 
+  color: white;
+}
+.button-blue:hover { background-color: #0b5ed7; }
 
-.button-green { background-color: var(--color-accent-green); }
-.button-green:hover { background-color: #33ff33; } /* Verde más claro */
+.button-green { 
+  background-color: #198754; 
+  color: white;
+}
+.button-green:hover { background-color: #157347; }
 
-.button-red { background-color: var(--color-accent-red); }
-.button-red:hover { background-color: #ff5555; } /* Rojo más claro */
+.button-red { 
+  background-color: #dc3545; 
+  color: white;
+}
+.button-red:hover { background-color: #bb2d3b; }
 
 
 /* ------------------------------------------- */
@@ -138,13 +119,11 @@ a:hover {
 .form-card {
   background-color: var(--color-bg-card);
   padding: 1.5rem;
-  border-radius: 0; /* ¡Estilo retro! */
+  border-radius: 12px;
   max-width: 800px;
   margin: 0 auto;
-  
-  /* Estilo de tarjeta retro */
-  border: 4px solid var(--primary-neon);
-  box-shadow: 8px 8px 0px var(--primary-neon);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 .form-grid {
@@ -163,35 +142,28 @@ a:hover {
 .textarea-field {
   padding: 0.75rem;
   background-color: var(--color-bg-input);
-  color: white;
-  border-radius: 0; /* ¡Estilo retro! */
-  border: 2px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
   width: 100%;
   box-sizing: border-box;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.75rem; /* Fuente pixel es grande, la bajamos */
+  font-family: inherit; /* Fuente del sistema */
+  font-size: 0.9rem;
 }
 .input-field:focus,
 .select-field:focus,
 .textarea-field:focus {
-  border-color: var(--color-accent-blue);
+  border-color: #0d6efd;
   outline: none;
-  /* Efecto GLOw al enfocar */
-  box-shadow: 0 0 10px var(--color-accent-blue);
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
 }
 .textarea-field {
   grid-column: 1 / -1;
   resize: vertical;
 }
 
-.checkbox-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 /* ------------------------------------------- */
-/* Tarjeta de Juego (Estilo Cyber-Glow) */
+/* Tarjeta de Juego (Estilo Notion) */
 /* ------------------------------------------- */
 .game-grid {
   display: grid;
@@ -200,80 +172,78 @@ a:hover {
 }
 
 .game-card {
-  background-color: var(--color-bg-card); /* Fondo oscuro */
-  padding: 1rem;
-  border-radius: 0; /* Mantenemos bordes rectos */
+  background-color: var(--color-bg-card);
+  border-radius: 12px; /* Bordes redondeados */
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px var(--color-shadow);
+  transition: all 0.2s;
+  
+  /* Importante: Sin padding, para que la imagen quede pegada arriba */
+  padding: 0;
   display: flex;
   flex-direction: column;
-  
-  /* --- ¡AQUÍ LA MAGIA! --- */
-  
-  /* 1. Borde fino color cyan */
-  border: 2px solid var(--secondary-neon);
-  
-  /* 2. Brillo (Glow) color cyan */
-  box-shadow: 0 0 10px var(--secondary-neon);
-  
-  /* 3. Transición suave para el hover */
-  transition: box-shadow 0.3s, border-color 0.3s;
 }
-
 .game-card:hover {
-  /* 1. Al pasar el mouse, el borde cambia a verde */
-  border-color: var(--accent-neon);
-  
-  /* 2. Y el brillo (Glow) también cambia a verde */
-  box-shadow: 0 0 15px var(--accent-neon);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
 }
 
 .game-card-img {
   width: 100%;
-  height: 12rem; 
+  height: 12rem;
   object-fit: cover;
-  border-radius: 0; 
-  margin-bottom: 1rem;
-  
-  /* Hacemos que el borde de la imagen también sea cyan */
-  border: 2px solid var(--secondary-neon); 
+  /* Bordes redondeados SÓLO arriba */
+  border-radius: 12px 12px 0 0; 
+  margin-bottom: 0;
+  border: none;
 }
 
-/* Ajustes para pantallas pequeñas */
-@media (max-width: 480px) {
-  .game-card-img {
-    height: 9rem;
-  }
+/* --- (OPCIONAL) ---
+  Si no quieres modificar tu App.jsx, descomenta este
+  bloque para añadir padding a todo MENOS la imagen
+*/
+/*
+.game-card > *:not(.game-card-img) {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
+.game-card h3 {
+  padding-top: 1rem;
+}
+.card-button-group {
+  padding-bottom: 1rem;
+}
+*/
+/* --- Fin Opcional --- */
 
-.game-status-completed {
-  background-color: var(--color-accent-green);
-  color: #000; 
-}
-.game-status-pending {
-  background-color: var(--color-accent-yellow);
-  color: #000; 
-}
+
+/* --- Estilo de Tags/Pills (¡CLAVE!) --- */
 .game-status {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0; 
+  font-family: inherit; /* Fuente del sistema */
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px; /* Totalmente redondo */
   font-size: 0.75rem;
   font-weight: 500;
   width: fit-content;
   margin-bottom: 1rem;
+  text-transform: none; /* Sin mayúsculas */
 }
+
+.game-status-completed {
+  background-color: var(--color-green-bg);
+  color: var(--color-green-text);
+}
+.game-status-pending {
+  background-color: var(--color-yellow-bg);
+  color: var(--color-yellow-text);
+}
+/* (Puedes añadir más si quieres) */
 
 .card-button-group {
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-/* En pantallas medias y grandes, los botones en línea y con wrap */
-@media (min-width: 640px) {
-  .card-button-group {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
 }
 
 /* ------------------------------------------- */
@@ -285,13 +255,11 @@ a:hover {
   gap: 1.5rem;
   max-width: 900px;
   margin: 0 auto;
-  background-color: var(--color-bg-dark);
-  padding: 1.5rem;
-  border-radius: 0; /* ¡Estilo retro! */
-  
-  /* Tarjeta retro principal */
-  border: 4px solid var(--primary-neon);
-  box-shadow: 8px 8px 0px var(--primary-neon);
+  background-color: transparent; /* Sin fondo */
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
 }
 
 @media (min-width: 1024px) {
@@ -303,24 +271,23 @@ a:hover {
 .detail-sidebar-content {
   background-color: var(--color-bg-card);
   padding: 1rem;
-  border-radius: 0; /* ¡Estilo retro! */
-  border: 2px solid var(--color-accent-blue);
-  box-shadow: 4px 4px 0px var(--color-accent-blue);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
 }
 
 .review-card {
   background-color: var(--color-bg-card);
   padding: 1rem;
-  border-radius: 0; /* ¡Estilo retro! */
+  border-radius: 12px;
+  box-shadow: none;
   border: 1px solid var(--color-border);
-  box-shadow: 4px 4px 0px var(--color-border);
 }
 .review-form {
   background-color: var(--color-bg-input);
   padding: 1.25rem;
-  border-radius: 0; /* ¡Estilo retro! */
+  border-radius: 12px;
   margin-top: 1rem;
-  border: 2px solid var(--secondary-neon);
+  border: 1px solid var(--color-border);
 }
 
 /* ------------------------------------------- */
@@ -340,107 +307,13 @@ a:hover {
 .stats-card {
   background-color: var(--color-bg-card);
   padding: 1.5rem;
-  border-radius: 0; /* ¡Estilo retro! */
+  border-radius: 12px;
   text-align: center;
-  border: 2px solid var(--color-border);
-  box-shadow: 4px 4px 0px var(--color-border);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px var(--color-shadow);
 }
-.stats-card-border-blue { 
-  border-color: var(--color-accent-blue);
-  box-shadow: 4px 4px 0px var(--color-accent-blue);
-}
-.stats-card-border-green {
-  border-color: var(--color-accent-green);
-  box-shadow: 4px 4px 0px var(--color-accent-green);
-}
-.stats-card-border-yellow {
-  border-color: var(--color-accent-yellow);
-  box-shadow: 4px 4px 0px var(--color-accent-yellow);
-}
+.stats-card-border-blue { border-top: 4px solid #0d6efd; }
+.stats-card-border-green { border-top: 4px solid #198754; }
+.stats-card-border-yellow { border-top: 4px solid #ffc107; }
 
-.stats-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-}
-.stats-list li {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-/* ------------------------------------------- */
-/* Estilos para Estrellas y Títulos */
-/* ------------------------------------------- */
-.star-rating {
-  display: flex;
-  font-size: 1.5rem;
-  color: var(--color-accent-yellow);
-}
-.star-rating .filled {
-  color: var(--color-accent-yellow);
-}
-.star-rating .empty {
-  color: var(--color-border);
-}
-
-.header-title {
-  font-size: 2.25rem;
-  color: var(--color-accent-blue);
-  text-shadow: 4px 4px 0px #000;
-}
-
-/* Títulos responsivos */
-@media (max-width: 480px) {
-  .header-title {
-    font-size: clamp(1.25rem, 6vw, 2rem);
-  }
-  .secondary-title {
-    font-size: clamp(1rem, 4.5vw, 1.5rem);
-  }
-}
-
-.secondary-title {
-  font-size: 1.5rem;
-  color: var(--color-accent-blue);
-  text-shadow: 2px 2px 0px #000;
-}
-/* --- (NUEVO) Estilo de Tags inspirado en Notion --- */
-
-.game-card-tags {
-  display: flex;
-  flex-wrap: wrap; /* Para que bajen si no caben */
-  gap: 0.5rem; /* Espacio entre tags */
-  margin-bottom: 1rem;
-}
-
-.game-tag {
-  /* Mantenemos tu fuente pixel */
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.65rem; /* Letra pequeña para las tags */
-  padding: 0.25rem 0.5rem;
-  
-  /* Color de fondo sutil (como Notion) */
-  background-color: var(--color-bg-input); /* Reusamos tu color de input */
-  
-  /* Borde neón sutil */
-  border: 1px solid var(--secondary-neon);
-  
-  color: var(--text);
-  border-radius: 0; /* Mantenemos tu estilo retro */
-  text-transform: uppercase;
-}
-
-/* Colores diferentes para cada tag (¡opcional!) */
-.tag-genero {
-  border-color: var(--primary-neon); /* Magenta */
-}
-.tag-plataforma {
-  border-color: var(--secondary-neon); /* Cyan */
-}
-.tag-año {
-  border-color: var(--accent-neon); /* Verde */
-}
+/* ... (el resto de clases de stats, etc. heredarán bien) */
