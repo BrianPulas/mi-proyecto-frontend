@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// NOTA: Para que este código funcione, debes asegurarte de importar 'frontend/styles.css'
-// Y el nuevo 'frontend/Navbar.css' (que te daré más abajo)
-// en tu archivo de entrada principal (ej. src/main.jsx).
-// Por ejemplo:
-// import './styles.css';
-// import './Navbar.css';
+// ... (tus imports de CSS, etc.)
 
 const API_URL = '/api';
 
@@ -38,18 +33,15 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí llamarías a tu función de login
     console.log("Iniciando sesión con:", email, password);
-    onLogin(); // Simulamos un login exitoso
+    onLogin(); 
   };
 
   return (
-    // Se añade la clase "form-card-translucent"
     <form onSubmit={handleSubmit} className="form-card form-card-translucent shadow-lg" style={{ maxWidth: '400px' }}>
       <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
         Iniciar Sesión
       </h2>
-      
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <input
           type="email"
@@ -73,7 +65,6 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
           Entrar
         </Button>
       </div>
-
       <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
         ¿No tienes cuenta?{' '}
         <a href="#" onClick={(e) => { e.preventDefault(); onGoToRegister(); }}>
@@ -92,25 +83,19 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Validación simple
     if (password !== confirmPassword) {
       alert("Las contraseñas no coinciden.");
       return;
     }
-    
-    // Aquí llamarías a tu función de registro
     console.log("Registrando con:", email, password);
-    onRegister(); // Simulamos un registro exitoso
+    onRegister(); 
   };
 
   return (
-    // Reusamos las mismas clases para el fondo de vidrio
     <form onSubmit={handleSubmit} className="form-card form-card-translucent shadow-lg" style={{ maxWidth: '400px' }}>
       <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
         Crear Cuenta
       </h2>
-      
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <input
           type="email"
@@ -139,12 +124,10 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
           required
           className="input-field"
         />
-        {/* Usamos un botón verde para diferenciarlo */}
         <Button type="submit" color="green" style={{ width: '100%', marginTop: '0.5rem' }}>
           Registrarse
         </Button>
       </div>
-
       <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
         ¿Ya tienes cuenta?{' '}
         <a href="#" onClick={(e) => { e.preventDefault(); onGoToLogin(); }}>
@@ -156,39 +139,30 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
 };
 
 
-// --- (¡MODIFICADO!) Componente Navbar (Ahora con menú responsive) ---
+// --- Componente Navbar ---
 const Navbar = ({ onNavigate }) => {
-  // 1. Añadimos estado para el menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // 2. Función para cerrar el menú al hacer clic en un enlace
   const handleNavigate = (view) => {
     onNavigate(view);
-    setIsMenuOpen(false); // Cierra el menú al navegar
+    setIsMenuOpen(false); 
   };
   
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        {/* Clic en el logo te lleva a la home */}
         <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(0); }}>
           PLUS ULTRA
         </a>
       </div>
-
-      {/* 3. Botón de Hamburguesa (solo visible en móvil) */}
       <button 
         className="navbar-toggle" 
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="Toggle navigation"
       >
-        {/* Esto crea el ícono de 3 líneas (la hamburguesa) */}
         <span></span>
         <span></span>
         <span></span>
       </button>
-
-      {/* 4. Los enlaces ahora tienen una clase 'active' si el menú está abierto */}
       <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
         <li>
           <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(1); }}>
@@ -200,7 +174,6 @@ const Navbar = ({ onNavigate }) => {
             Estadísticas
           </a>
         </li>
-        {/* --- ¡AÑADIDO! Enlace de Login --- */}
         <li>
           <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(5); }} style={{color: 'var(--color-blue-text)'}}>
             Iniciar Sesión
@@ -221,18 +194,14 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
             className="game-card-img"
             onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
         />
-        
-        {/* Contenedor con padding para el estilo dark mode */}
         <div style={{ padding: '1rem' }}>
             <h3 className="text-xl font-bold text-blue-400 truncate mb-1" style={{ color: 'var(--color-text-primary)' }}>{juego.titulo}</h3>
             <p className="text-sm text-gray-400 mb-2" style={{ color: 'var(--color-text-secondary)', opacity: 0.9 }}>
                 {juego.genero} • {juego.plataforma} ({juego.añoLanzamiento})
             </p>
-
             <div className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`}>
                 {juego.completado ? 'COMPLETADO' : 'PENDIENTE'}
             </div>
-
             <div className="card-button-group">
                 <Button onClick={() => onViewDetails(juego)} color="blue">
                     Ver Detalles / Reseñas
@@ -245,11 +214,10 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
                 </Button>
             </div>
         </div>
-        
     </div>
 );
 
-// --- (¡MODIFICADO!) Componente FormularioJuego ---
+// --- Componente FormularioJuego ---
 const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
     const isEdit = !!juegoInicial._id;
     const [juego, setJuego] = useState({
@@ -264,52 +232,30 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
         ...juegoInicial
     });
 
-    // --- ¡NUEVO! Estados para la búsqueda ---
     const [searchResults, setSearchResults] = useState([]);
     const [loadingSearch, setLoadingSearch] = useState(false);
 
-    // --- ¡NUEVO! Efecto "Debounce" para la búsqueda ---
-    // Esto evita que hagamos una llamada a la API en cada pulsación de tecla.
     useEffect(() => {
-        // Si el título está vacío o estamos editando, no busques.
         if (isEdit || !juego.titulo.trim()) {
-            setSearchResults([]); // Limpia resultados
+            setSearchResults([]); 
             return;
         }
-
         setLoadingSearch(true);
-
-        // Configura un temporizador
         const searchTimer = setTimeout(async () => {
             try {
-                // Codifica el título para URL (evita errores con espacios/símbolos)
-                const q = encodeURIComponent(juego.titulo.trim());
-                // Llama a NUESTRO backend, no a RAWG directamente
-                const response = await fetch(`/api/search-game/${q}`);
-                if (!response.ok) {
-                    // Evita throw; guarda el error con más contexto
-                    const msg = `Error en la búsqueda (HTTP ${response.status})`;
-                    console.error(msg);
-                    setSearchResults([]);
-                    return;
-                }
-                
+                const response = await fetch(`/api/search-game/${juego.titulo}`);
+                if (!response.ok) throw new Error('Error en la búsqueda');
                 const data = await response.json();
                 setSearchResults(data);
-
             } catch (error) {
-                console.error('Busqueda fallida:', error);
-                setSearchResults([]); // Limpia en caso de error
+                console.error(error);
+                setSearchResults([]);
             } finally {
                 setLoadingSearch(false);
             }
-        }, 500); // Espera 500ms después de que el usuario deja de escribir
-
-        // Función de limpieza: se ejecuta si el usuario sigue escribiendo
+        }, 500); 
         return () => clearTimeout(searchTimer);
-
-    }, [juego.titulo, isEdit]); // Se activa cada vez que 'juego.titulo' cambia
-
+    }, [juego.titulo, isEdit]); 
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -319,18 +265,13 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
         }));
     };
 
-    // --- ¡NUEVO! Función para auto-rellenar ---
     const handleSelectGame = (game) => {
         setJuego(prev => ({
             ...prev,
             titulo: game.name,
             añoLanzamiento: game.released,
             imagenPortada: game.background_image,
-            // (Si RAWG te da otros datos, puedes rellenarlos aquí)
-            // desarrollador: game.developer || '',
         }));
-        
-        // Escondemos los resultados
         setSearchResults([]);
     };
 
@@ -347,11 +288,8 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
             <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
               {isEdit ? 'Editar Juego' : 'Añadir Nuevo Juego'}
             </h2>
-
             <div className="form-grid">
-                
-                {/* --- CAMPO DE TÍTULO (con buscador) --- */}
-                <div style={{ position: 'relative' }}> {/* Contenedor relativo para el desplegable */}
+                <div style={{ position: 'relative' }}> 
                     <input
                         name="titulo"
                         value={juego.titulo}
@@ -359,15 +297,12 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                         placeholder="Título del Videojuego *"
                         required
                         className="input-field"
-                        autoComplete="off" // Evita el autocompletado del navegador
-                        disabled={isEdit} // Desactivado si estamos editando
+                        autoComplete="off"
+                        disabled={isEdit} 
                     />
-                    
-                    {/* --- ¡NUEVO! El desplegable de resultados --- */}
                     { (loadingSearch || searchResults.length > 0) && (
                         <div className="search-results-container">
                             {loadingSearch && <div className="search-loading">Buscando...</div>}
-                            
                             {searchResults.map(game => (
                                 <div 
                                     key={game.id} 
@@ -381,8 +316,6 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                         </div>
                     )}
                 </div>
-                
-                {/* --- Resto del formulario --- */}
                 <input
                     name="desarrollador"
                     value={juego.desarrollador}
@@ -391,20 +324,10 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                     required
                     className="input-field"
                 />
-                <select
-                    name="genero"
-                    value={juego.genero}
-                    onChange={handleChange}
-                    className="select-field"
-                >
+                <select name="genero" value={juego.genero} onChange={handleChange} className="select-field">
                     {generos.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
-                <select
-                    name="plataforma"
-                    value={juego.plataforma}
-                    onChange={handleChange}
-                    className="select-field"
-                >
+                <select name="plataforma" value={juego.plataforma} onChange={handleChange} className="select-field">
                     {plataformas.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
                 <input
@@ -426,7 +349,6 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                     className="input-field"
                 />
             </div>
-
             <textarea
                 name="descripcion"
                 value={juego.descripcion}
@@ -435,7 +357,6 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                 rows="3"
                 className="textarea-field"
             />
-
             <div className="checkbox-group">
                 <input
                     type="checkbox"
@@ -447,14 +368,9 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                 />
                 <label htmlFor="completado" style={{ color: 'var(--color-text-primary)' }}>Marcar como Completado</label>
             </div>
-
             <div className="flex justify-end space-x-4 pt-4">
-                <Button onClick={onCancel} color="red" type="button">
-                    Cancelar
-                </Button>
-                <Button type="submit" color="blue">
-                    {isEdit ? 'Guardar Cambios' : 'Agregar Juego'}
-                </Button>
+                <Button onClick={onCancel} color="red" type="button">Cancelar</Button>
+                <Button type="submit" color="blue">{isEdit ? 'Guardar Cambios' : 'Agregar Juego'}</Button>
             </div>
         </form>
     );
@@ -462,6 +378,7 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
 
 // --- Componente DetalleJuego / FormularioReseña / ListaReseñas ---
 const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateReviews }) => {
+    // ... (El código de este componente no necesita cambios)
     const [reseñas, setReseñas] = useState([]);
     const [isAddingReview, setIsAddingReview] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -503,8 +420,8 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             if (!response.ok) throw new Error(`Error al ${method === 'POST' ? 'crear' : 'actualizar'} reseña`);
             
             setIsAddingReview(false);
-            fetchReseñas(); // Recargar reseñas
-            onUpdateReviews(); // Notificar al componente principal para actualizar stats
+            fetchReseñas(); 
+            onUpdateReviews(); 
         } catch (err) {
             setError(err.message);
         } finally {
@@ -642,23 +559,18 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
 
     return (
         <div className="detail-layout">
-            {/* Columna de Imagen y Info */}
             <div className="lg-col-span-1">
                 <Button onClick={onBack} color="blue" style={{ marginBottom: '1.5rem', width: '100%' }}>← Volver a la Biblioteca</Button>
-                
                 <img
                     src={juego.imagenPortada}
                     alt={juego.titulo}
                     className="w-full h-auto object-cover rounded-xl shadow-xl"
-                    // --- (MODIFICADO) Limpiado estilo en línea ---
                     style={{ border: '1px solid var(--color-border)' }}
                     onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
                 />
                 <div className="detail-sidebar-content" style={{ marginTop: '1rem' }}>
-                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                     <h2 className="text-3xl font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{juego.titulo}</h2>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.8, marginTop: '0.25rem' }}>{juego.desarrollador} • {juego.añoLanzamiento}</p>
-                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                     <p className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`} style={{ marginTop: '0.5rem' }}>
                         {juego.completado ? 'COMPLETADO' : 'PENDIENTE'}
                     </p>
@@ -672,30 +584,23 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                     </div>
                 </div>
             </div>
-
-            {/* Columna de Descripción y Reseñas */}
             <div className="lg-col-span-2">
                 <h3 className="secondary-title mb-2">Descripción</h3>
-                {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                 <p style={{ color: 'var(--color-text-primary)', backgroundColor: 'var(--color-bg-input)' }} className="p-4 rounded-lg shadow-inner">
                     {juego.descripcion || "No se ha proporcionado una descripción."}
                 </p>
-
                 <div className="flex justify-between items-center" style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
                     <h3 className="secondary-title">Reseñas</h3>
                     {!isAddingReview && <Button onClick={() => setIsAddingReview(true)}>+ Nueva Reseña</Button>}
                 </div>
-                
                 {error && <div style={{ background: 'var(--color-accent-red)', padding: '0.75rem', color: 'white', borderRadius: '0.5rem', marginBottom: '1rem' }}>Error: {error}</div>}
                 {loading && <div style={{ color: 'var(--color-blue-text)', textAlign: 'center' }}>Cargando reseñas...</div>}
-                
                 {isAddingReview && (
                     <ReviewForm 
                         onSave={handleReviewSubmit}
                         onCancel={() => setIsAddingReview(false)}
                     />
                 )}
-
                 <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {reseñas.length > 0 ? (
                         reseñas.map(r => <ReviewCard key={r._id} reseña={r} />)
@@ -710,6 +615,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
 
 // --- Componente EstadisticasPersonales ---
 const EstadisticasPersonales = ({ juegos, onBack }) => {
+    // ... (El código de este componente no necesita cambios)
     const totalJuegos = juegos.length;
     const completados = juegos.filter(j => j.completado).length;
     const porcentajeCompletado = totalJuegos > 0 ? ((completados / totalJuegos) * 100).toFixed(1) : 0;
@@ -724,49 +630,35 @@ const EstadisticasPersonales = ({ juegos, onBack }) => {
         <div className="app-container">
             <Button onClick={onBack} color="blue" style={{ marginBottom: '1.5rem' }}>← Volver a la Biblioteca</Button>
             <h2 className="header-title" style={{ marginBottom: '2rem' }}>Dashboard Personal</h2>
-
             <div className="stats-grid">
-                
-                {/* Tarjeta 1: Total de Juegos */}
                 <div className="stats-card stats-card-border-blue">
-                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                     <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{totalJuegos}</p>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos en Biblioteca</p>
                 </div>
-
-                {/* Tarjeta 2: Juegos Completados */}
                 <div className="stats-card stats-card-border-green">
-                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                     <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{completados}</p>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos Completados</p>
                 </div>
-                
-                {/* Tarjeta 3: Porcentaje Completado */}
                 <div className="stats-card stats-card-border-yellow">
-                    {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                     <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{porcentajeCompletado}%</p>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Progreso General</p>
                 </div>
             </div>
-
             <div className="stats-card" style={{ marginTop: '2rem', textAlign: 'left' }}>
                 <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Plataforma</h3>
                 <ul className="stats-list" style={{ color: 'var(--color-text-secondary)' }}>
                     {Object.entries(plataformaCount).map(([plataforma, count]) => (
                         <li key={plataforma}>
                             <span>🎮 {plataforma}</span>
-                            {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
                             <span style={{ fontWeight: '700', color: 'var(--color-text-primary)' }}>{count}</span>
                         </li>
                     ))}
                 </ul>
             </div>
-            
             <div className="stats-card" style={{ marginTop: '1.5rem', textAlign: 'left' }}>
                 <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Géneros Rastreados</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {generos.map(g => (
-                        // --- (MODIFICADO) Limpiado estilo en línea ---
                         <span key={g} style={{ 
                           background: 'var(--color-blue-bg)', 
                           color: 'var(--color-blue-text)', 
@@ -783,6 +675,57 @@ const EstadisticasPersonales = ({ juegos, onBack }) => {
         </div>
     );
 };
+
+// --- (¡NUEVO!) Componente del Feed de Actividad ---
+const ActivityFeed = ({ onViewDetails }) => {
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeed = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_URL}/feed`);
+        const data = await response.json();
+        setActivities(data);
+      } catch (err) {
+        console.error("Error al cargar el feed:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFeed();
+  }, []); // Se ejecuta solo una vez al cargar el componente
+
+  if (loading) {
+    return <div style={{color: 'var(--color-text-secondary)', textAlign: 'center', padding: '2rem'}}>Cargando feed...</div>;
+  }
+
+  return (
+    <div className="activity-feed-container">
+      <h2 className="secondary-title" style={{marginBottom: '1rem'}}>Actividad Reciente</h2>
+      {activities.length === 0 ? (
+        <p style={{color: 'var(--color-text-secondary)', fontStyle: 'italic'}}>Aún no hay actividad.</p>
+      ) : (
+        <div className="activity-list">
+          {activities.map(activity => (
+            <div 
+              key={activity._id} 
+              className="activity-item"
+              // Hacemos que sea clickeable si tiene un gameId
+              onClick={() => activity.gameId ? onViewDetails(activity.gameId) : null}
+              style={{ cursor: activity.gameId ? 'pointer' : 'default' }}
+            >
+              <span className="activity-icon">🔥</span>
+              <p>{activity.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 
 // --- Componente principal App ---
 const App = () => {
@@ -812,7 +755,6 @@ const App = () => {
         if (filterCompletado) params.append('completado', filterCompletado);
         if (ordenarPor) params.append('ordenarPor', ordenarPor);
         
-        const API_URL = '/api';
         const url = `${API_URL}/juegos?${params.toString()}`;
 
         try {
@@ -828,8 +770,11 @@ const App = () => {
     };
 
     useEffect(() => {
-        fetchJuegos();
-    }, [searchTerm, filterGenero, filterPlataforma, filterCompletado, ordenarPor, reviewUpdateTrigger]);
+        // Solo carga los juegos si estamos en la vista de biblioteca
+        if (view === 0) {
+            fetchJuegos();
+        }
+    }, [view, searchTerm, filterGenero, filterPlataforma, filterCompletado, ordenarPor, reviewUpdateTrigger]);
 
     const handleSaveJuego = async (juegoData, isEdit) => {
         setLoading(true);
@@ -843,7 +788,10 @@ const App = () => {
                 body: JSON.stringify(juegoData)
             });
 
-            if (!response.ok) throw new Error(`Error al ${isEdit ? 'actualizar' : 'agregar'} juego`);
+            if (!response.ok) {
+              const errData = await response.json(); // Lee el error del backend
+              throw new Error(errData.error || `Error al ${isEdit ? 'actualizar' : 'agregar'} juego`);
+            }
 
             const updatedJuego = await response.json();
             if (isEdit && view === 3) {
@@ -851,9 +799,10 @@ const App = () => {
             }
 
             setView(0); 
-            fetchJuegos(); 
+            // No necesitamos llamar a fetchJuegos() aquí,
+            // porque el useEffect se disparará cuando 'view' cambie a 0
         } catch (err) {
-            setError(err.message);
+            setError(err.message); // <-- ¡Aquí es donde aparece tu error!
         } finally {
             setLoading(false);
         }
@@ -874,7 +823,7 @@ const App = () => {
             if (juegoSeleccionado && juegoSeleccionado._id === id) {
                 setJuegoSeleccionado(updatedJuego);
             }
-            fetchJuegos();
+            fetchJuegos(); // Llama aquí para refrescar la lista
             
         } catch (err) {
             setError(err.message);
@@ -894,7 +843,7 @@ const App = () => {
             const response = await fetch(`${API_URL}/juegos/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Error al eliminar juego');
             setView(0);
-            fetchJuegos();
+            // El useEffect se disparará cuando 'view' cambie a 0
         } catch (err) {
             setError(err.message);
         } finally {
@@ -903,7 +852,19 @@ const App = () => {
     };
     
     const handleViewDetails = (juego) => {
-        setJuegoSeleccionado(juego);
+        // Esta función ahora puede recibir un ID de juego (del feed) o el objeto (de la tarjeta)
+        let juegoASeleccionar = juego;
+
+        // Si solo nos pasan un ID...
+        if (typeof juego === 'string' || juego instanceof String) {
+          juegoASeleccionar = juegos.find(j => j._id === juego);
+          if (!juegoASeleccionar) {
+            console.error("Juego no encontrado en la lista");
+            return;
+          }
+        }
+        
+        setJuegoSeleccionado(juegoASeleccionar);
         setView(3);
     };
 
@@ -919,15 +880,19 @@ const App = () => {
 
         return (
             <div className="app-container">
+                
+                {/* --- ¡AÑADIDO! El Feed de Actividad --- */}
+                <ActivityFeed onViewDetails={handleViewDetails} />
+
                 {/* Área de Filtros y Búsqueda */}
-                <div className="form-card shadow-lg" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
+                <div className="form-card shadow-lg" style={{ marginTop: '2rem', marginBottom: '1.5rem', padding: '1rem' }}>
                     <input
                         type="text"
                         placeholder="Buscar por título o desarrollador..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="input-field"
-                        style={{ marginBottom: '1rem' }} // Corregido de '1am' a '1rem'
+                        style={{ marginBottom: '1rem' }} 
                     />
                     <div className="form-grid">
                         <select
@@ -998,11 +963,8 @@ const App = () => {
     // --- Renderizado principal (Router simple) ---
     const renderContent = () => {
         switch (view) {
-            // --- ¡MODIFICADO! Se usa "app-container" para centrar el formulario
             case 1:
                 return <div className="app-container"><FormularioJuego onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
-            
-            // --- ¡MODIFICADO! Se usa "app-container" para centrar el formulario
             case 2:
                 return <div className="app-container"><FormularioJuego juegoInicial={juegoSeleccionado} onSave={handleSaveJuego} onCancel={() => setView(0)} /></div>;
             case 3:
@@ -1015,19 +977,15 @@ const App = () => {
                         />;
             case 4:
                 return <EstadisticasPersonales juegos={juegos} onBack={() => setView(0)} />;
-
-            // --- ¡AÑADIDO! Case para el Login ---
             case 5:
               return (
-                // Usamos un 'login-container' para centrarlo verticalmente
                 <div className="login-container">
                   <FormularioLogin 
-                    onLogin={() => setView(0)} // Al loguearse, vuelve a la home
-                    onGoToRegister={() => setView(6)} // ¡MODIFICADO! Te lleva al case 6
+                    onLogin={() => setView(0)} 
+                    onGoToRegister={() => setView(6)} // ¡MODIFICADO!
                   />
                 </div>
               );
-
             // --- ¡AÑADIDO! Case para el Registro ---
             case 6:
               return (
@@ -1038,20 +996,15 @@ const App = () => {
                   />
                 </div>
               );
-
             case 0:
             default:
                 return <BibliotecaJuegos />;
         }
     };
 
-    // --- ¡MODIFICADO! Se corrigió el color de fondo para que coincida con el nuevo tema dark
     return (
         <div className="min-h-screen font-sans" style={{ background: 'var(--color-bg-main)', color: 'var(--color-text-primary)' }}>
-            
             <Navbar onNavigate={setView} />
-            
-            {/* Aquí se renderiza el contenido de la vista actual */}
             {renderContent()}
         </div>
     );
