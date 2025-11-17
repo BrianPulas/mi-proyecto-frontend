@@ -794,9 +794,8 @@ const EstadisticasPersonales = ({ onBack }) => {
     );
 };
 
-// --- Componente del Feed de Actividad ---
+// --- Componente del Feed de Actividad (como pestaña lateral izquierda con hover) ---
 const ActivityFeed = ({ onViewDetails }) => {
-  // ... (Este componente no cambia) ...
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -813,31 +812,32 @@ const ActivityFeed = ({ onViewDetails }) => {
       }
     };
     fetchFeed();
-  }, []); 
+  }, []);
 
-  if (loading) {
-    return <div style={{color: 'var(--color-text-secondary)', textAlign: 'center', padding: '2rem'}}>Cargando feed...</div>;
-  }
   return (
-    <div className="activity-feed-container">
-      <h2 className="secondary-title" style={{marginBottom: '1rem'}}>Actividad Reciente</h2>
-      {activities.length === 0 ? (
-        <p style={{color: 'var(--color-text-secondary)', fontStyle: 'italic'}}>Aún no hay actividad.</p>
-      ) : (
-        <div className="activity-list">
-          {activities.map(activity => (
-            <div 
-              key={activity._id} 
-              className="activity-item"
-              onClick={() => activity.gameId ? onViewDetails(activity.gameId) : null}
-              style={{ cursor: activity.gameId ? 'pointer' : 'default' }}
-            >
-              <span className="activity-icon">🔥</span>
-              <p>{activity.text}</p>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="activity-feed-tab" aria-label="Actividad Reciente">
+      <div className="activity-feed-content shadow-lg">
+        <div className="activity-feed-header">Actividad Reciente</div>
+        {loading ? (
+          <div style={{color: 'var(--color-text-secondary)', textAlign: 'center', padding: '0.75rem'}}>Cargando feed...</div>
+        ) : activities.length === 0 ? (
+          <p style={{color: 'var(--color-text-secondary)', fontStyle: 'italic', padding: '0.5rem 0.75rem'}}>Aún no hay actividad.</p>
+        ) : (
+          <div className="activity-list">
+            {activities.map(activity => (
+              <div
+                key={activity._id}
+                className="activity-item"
+                onClick={() => activity.gameId ? onViewDetails(activity.gameId) : null}
+                style={{ cursor: activity.gameId ? 'pointer' : 'default' }}
+              >
+                <span className="activity-icon">🔥</span>
+                <p>{activity.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
