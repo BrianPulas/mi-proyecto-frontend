@@ -31,7 +31,7 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
     </button>
 );
 
-// --- (¡NUEVO!) Componente FormularioLogin ---
+// --- Componente FormularioLogin ---
 function FormularioLogin({ onLogin, onGoToRegister }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,7 +44,7 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
   };
 
   return (
-    // --- ¡CAMBIO AQUÍ! Se añadió la clase "form-card-translucent" ---
+    // Se añade la clase "form-card-translucent"
     <form onSubmit={handleSubmit} className="form-card form-card-translucent shadow-lg" style={{ maxWidth: '400px' }}>
       <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
         Iniciar Sesión
@@ -78,6 +78,77 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
         ¿No tienes cuenta?{' '}
         <a href="#" onClick={(e) => { e.preventDefault(); onGoToRegister(); }}>
           Regístrate
+        </a>
+      </p>
+    </form>
+  );
+};
+
+// --- (¡NUEVO!) Componente FormularioRegistro ---
+function FormularioRegistro({ onRegister, onGoToLogin }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validación simple
+    if (password !== confirmPassword) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+    
+    // Aquí llamarías a tu función de registro
+    console.log("Registrando con:", email, password);
+    onRegister(); // Simulamos un registro exitoso
+  };
+
+  return (
+    // Reusamos las mismas clases para el fondo de vidrio
+    <form onSubmit={handleSubmit} className="form-card form-card-translucent shadow-lg" style={{ maxWidth: '400px' }}>
+      <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
+        Crear Cuenta
+      </h2>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <input
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+          className="input-field"
+        />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Contraseña"
+          required
+          className="input-field"
+        />
+        <input
+          type="password"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirmar Contraseña"
+          required
+          className="input-field"
+        />
+        {/* Usamos un botón verde para diferenciarlo */}
+        <Button type="submit" color="green" style={{ width: '100%', marginTop: '0.5rem' }}>
+          Registrarse
+        </Button>
+      </div>
+
+      <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
+        ¿Ya tienes cuenta?{' '}
+        <a href="#" onClick={(e) => { e.preventDefault(); onGoToLogin(); }}>
+          Inicia Sesión
         </a>
       </p>
     </form>
@@ -628,7 +699,7 @@ const EstadisticasPersonales = ({ juegos, onBack }) => {
 
 // --- Componente principal App ---
 const App = () => {
-    // 0: Biblioteca, 1: Agregar Juego, 2: Editar Juego, 3: Detalle/Reseñas, 4: Estadísticas, 5: Login
+    // 0: Biblioteca, 1: Agregar Juego, 2: Editar Juego, 3: Detalle/Reseñas, 4: Estadísticas, 5: Login, 6: Registro
     const [view, setView] = useState(0); 
     const [juegos, setJuegos] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -865,7 +936,18 @@ const App = () => {
                 <div className="login-container">
                   <FormularioLogin 
                     onLogin={() => setView(0)} // Al loguearse, vuelve a la home
-                    onGoToRegister={() => alert('Ir a la página de registro')} // (Puedes crear un case 6 para esto)
+                    onGoToRegister={() => setView(6)} // ¡MODIFICADO! Te lleva al case 6
+                  />
+                </div>
+              );
+
+            // --- ¡AÑADIDO! Case para el Registro ---
+            case 6:
+              return (
+                <div className="login-container">
+                  <FormularioRegistro
+                    onRegister={() => setView(0)} // Al registrarse, vuelve a la home
+                    onGoToLogin={() => setView(5)} // Te lleva de vuelta al login
                   />
                 </div>
               );
