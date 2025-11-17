@@ -1,18 +1,28 @@
-/* --- (NUEVO) Navbar.css (Dark Mode) --- */
-
+/* --- En Navbar.css --- */
 .navbar {
+  /* --- ¡NUEVO! Posición Fija --- */
+  position: sticky; /* Se queda fijo en la parte superior */
+  top: 0;
+  width: 100%;
+  z-index: 100; /* Asegura que esté por encima de todo */
+
+  /* --- ¡NUEVO! Efecto Vidrio (Acrílico) --- */
+  /* Fondo oscuro con 80% de opacidad */
+  background-color: rgba(30, 30, 30, 0.8); /* Es tu --color-bg-card con transparencia */
+  
+  /* El "vidrio esmerilado" */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Para Safari */
+  
+  /* Borde sutil para separarlo del contenido */
+  border-bottom: 1px solid var(--color-border);
+  
+  /* --- Estilos que ya tenías --- */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  
-  /* Fondo de tarjeta y borde sutil */
-  background-color: var(--color-bg-card);
-  border-bottom: 1px solid var(--color-border);
-  
-  box-shadow: none;
-  position: relative;
-  z-index: 10;
+  box-shadow: none; /* Quitamos cualquier sombra vieja */
 }
 
 /* Estilo del logo */
@@ -171,40 +181,61 @@
   position: absolute;
   right: 0;
   top: calc(100% + 8px);
-  background: var(--color-bg-card);
+  /* Efecto glass (acrílico) */
+  background-color: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-  width: 260px;
-  padding: 0.75rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-shadow);
+  width: 320px;
+  padding: 1rem;
   z-index: 1000;
 }
 
 .profile-menu-row {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .profile-menu .input-field {
   flex: 1;
 }
 
-.profile-menu .btn {
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-
-.profile-menu .btn-save {
-  background: var(--color-blue-bg);
-  color: var(--color-blue-text);
-}
-
-.profile-menu .btn-logout {
-  background: var(--color-red-bg);
-  color: var(--color-red-text);
+.profile-menu .button {
   width: 100%;
+}
+
+.profile-menu-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.25rem 0 0.75rem;
+}
+/* --- (¡NUEVO!) Estilo para la imagen del Logo --- */
+
+.navbar-logo a {
+  /* Esto ayuda a alinear la imagen verticalmente si es necesario */
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.navbar-logo-img {
+  /* Define la altura de tu logo */
+  height: 20px; 
+  /* El ancho se ajustará automáticamente */
+  width: auto;
+  /* Agranda visualmente sin alterar el layout del navbar */
+  transform: scale(5.0);
+  transform-origin: left center;
+}
+
+/* Opcional: si el logo se ve mal en móvil */
+@media (max-width: 768px) {
+  .navbar-logo-img {
+    height: 35px; /* Un poco más pequeño en móviles */
+    transform: scale(1.1);
+  }
 }

@@ -20,6 +20,13 @@
   --color-blue-text: #2a5a95;
   --color-red-bg: #ffe2e0;
   --color-red-text: #8c2e28;
+
+  /* Colores para el gradiente de fondo de la tarjeta (ajustados para el nuevo estilo) */
+  --card-gradient-start: rgba(30, 30, 30, 0.7); /* Gris oscuro translúcido */
+  --card-gradient-end: rgba(18, 18, 18, 0.7);   /* Negro translúcido */
+  
+  /* Color del borde para este estilo */
+  --card-border-color: rgba(255, 255, 255, 0.08); /* Borde blanco muy sutil y translúcido */
 }
 
 body {
@@ -67,29 +74,51 @@ a:hover {
   border-radius: 0.75rem; /* 12px */
 }
 
-/* Botón Minimalista (ya funciona bien con el estilo anterior) */
+/* --- (¡MODIFICADO!) Botón Minimalista (Estilo "Fantasma") --- */
 .button {
   font-family: inherit;
   padding: 10px 16px;
-  color: #FFFFFF;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent; /* Borde invisible por defecto */
   text-transform: none;
   cursor: pointer;
   border-radius: 6px;
-  transition: all 0.2s;
   font-weight: 500;
+  
+  /* Transición suave para el color y el fondo */
+  transition: all 0.2s ease-in-out; 
+  
+  /* Por defecto, son transparentes */
+  background-color: transparent; 
+  box-shadow: none; /* Quitamos la sombra */
 }
 .button:active {
   transform: scale(0.98);
   box-shadow: none;
 }
-.button-blue { background-color: #0d6efd; color: white; }
-.button-blue:hover { background-color: #0b5ed7; }
-.button-green { background-color: #198754; color: white; }
-.button-green:hover { background-color: #157347; }
-.button-red { background-color: #dc3545; color: white; }
-.button-red:hover { background-color: #bb2d3b; }
+.button-blue {
+  border-color: #0d6efd; /* Borde azul */
+  color: #0d6efd;
+}
+.button-blue:hover {
+  background-color: #0d6efd; /* Relleno azul al hacer hover */
+  color: white;
+}
+.button-green {
+  border-color: #198754;
+  color: #198754;
+}
+.button-green:hover {
+  background-color: #198754;
+  color: white;
+}
+.button-red {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+.button-red:hover {
+  background-color: #dc3545;
+  color: white;
+}
 
 
 /* ------------------------------------------- */
@@ -128,6 +157,9 @@ a:hover {
   box-sizing: border-box;
   font-family: inherit;
   font-size: 0.9rem;
+  
+  /* --- (¡AÑADIDO!) Transición suave --- */
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .input-field:focus,
 .select-field:focus,
@@ -163,7 +195,8 @@ a:hover {
 .game-card:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-4px);
-  border-color: #444;
+  /* --- (¡MODIFICADO!) Borde azul en hover --- */
+  border-color: var(--color-blue-text);
 }
 
 .game-card-img {
@@ -231,6 +264,7 @@ a:hover {
 
 /* ------------------------------------------- */
 /* Pestaña lateral: Actividad Reciente en Home */
+/* (Este código se mantiene igual) */
 /* ------------------------------------------- */
 .activity-feed-tab {
   position: fixed;
@@ -282,8 +316,6 @@ a:hover {
   overflow-y: auto;
   padding: 0.5rem 0.5rem 0.75rem 0.75rem;
 }
-
-/* Oculta el contenido del panel mientras está colapsado para que no se vea recortado */
 .activity-feed-header, .activity-list {
   transition: opacity 0.2s ease;
 }
@@ -296,6 +328,83 @@ a:hover {
 .activity-feed-tab:hover .activity-list {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* --- (Nuevo) Resumen compacto dentro del feed de actividad --- */
+.activity-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+.activity-summary-item {
+  background: var(--card-gradient-start);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.summary-label {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+.summary-value {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* --- (Nuevo) Sección de amigos dentro del feed --- */
+.friends-section {
+  padding: 0.25rem 0.75rem 0.5rem;
+}
+.friends-header {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.friend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+}
+.friend-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.friend-item img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+.friend-info {
+  display: flex;
+  flex-direction: column;
+}
+.friend-name {
+  color: var(--color-text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.friend-status {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+.friends-empty {
+  color: var(--color-text-secondary);
+  font-style: italic;
+  padding: 0.25rem 0.5rem;
 }
 .activity-item {
   display: flex;
@@ -370,31 +479,60 @@ a:hover {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  
+  /* --- ¡AÑADIDO! Animación "Ken Burns" (la mantenemos) --- */
+  animation: ken-burns-pan 20s infinite alternate ease-in-out;
+  overflow: hidden; 
 }
 
-/* --- (¡NUEVO!) Clase para formulario translúcido --- */
+/* --- (¡NUEVO ESTILO!) Clase para formulario de Login sutil y translúcido --- */
 .form-card-translucent {
-  background-color: rgba(30, 30, 30, 0.75);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* No necesitamos position: relative ni overflow: hidden si no hay pseudo-elemento */
+  /* El background será un gradiente translúcido */
+  background: linear-gradient(
+    135deg, 
+    var(--card-gradient-start), 
+    var(--card-gradient-end)
+  );
+  
+  /* El efecto de "vidrio esmerilado" lo mantenemos */
+  backdrop-filter: blur(8px); /* Ligeramente menos blur para un look más limpio */
+  -webkit-backdrop-filter: blur(8px); /* Para Safari */
+  
+  /* Borde sutil */
+  border: 1px solid var(--card-border-color); /* Usamos la nueva variable */
+  border-radius: 14px; /* Un poco más redondeado */
+  
+  /* Sombra más suave */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra más extendida y suave */
+
+  padding: 1.5rem; /* Asegura el padding interno de la tarjeta */
+  max-width: 400px; /* Un ancho máximo más común para formularios de login */
+  margin: 0 auto; /* Centrarlo */
+  position: relative; /* Por si acaso se añade contenido absoluto luego */
 }
+
+/* --- (¡ELIMINADO!) Ya no necesitamos el pseudo-elemento ::before para este estilo --- */
+/* Eliminar este bloque:
+.form-card-translucent::before { ... }
+*/
+
 /* ------------------------------------------- */
 /* (¡NUEVO!) Estilos para el Buscador (RAWG) */
 /* ------------------------------------------- */
 
 .search-results-container {
   position: absolute;
-  top: 100%; /* Justo debajo del input */
+  top: 100%; 
   left: 0;
   right: 0;
-  background-color: var(--color-bg-input); /* Fondo de input */
+  background-color: var(--color-bg-input); 
   border: 1px solid var(--color-border);
   border-top: none;
-  border-radius: 0 0 6px 6px; /* Redondeado solo abajo */
+  border-radius: 0 0 6px 6px;
   max-height: 300px;
   overflow-y: auto;
-  z-index: 100; /* Por encima de otros elementos */
+  z-index: 100;
 }
 
 .search-loading {
@@ -413,7 +551,7 @@ a:hover {
 }
 
 .search-result-item:hover {
-  background-color: var(--color-bg-card); /* Un poco más oscuro */
+  background-color: var(--color-bg-card);
 }
 
 .search-result-item img {
@@ -431,11 +569,27 @@ a:hover {
 /* (¡NUEVO!) Estilos para el Dashboard */
 /* ------------------------------------------- */
 
-/* Arregla el tamaño de los gráficos de Pie */
 .stats-card canvas {
   max-height: 300px;
   max-width: 100%;
 }
+
+/* --- (¡MODIFICADO!) Animación "Ken Burns" --- */
+@keyframes ken-burns-pan {
+  0% {
+    background-position: center center;
+    background-size: 100% 100%;
+  }
+  100% {
+    background-position: top left;
+    background-size: 120% 120%; /* Zoom lento */
+  }
+}
+
+/* --- (¡ELIMINADO!) Ya no necesitamos la animación del borde para este estilo --- */
+/* Eliminar este bloque:
+@keyframes animated-border-shimmer { ... }
+*/
 
 /* --- Overrides para tema claro --- */
 body.light {
@@ -446,4 +600,8 @@ body.light {
   --color-text-secondary: #666666;
   --color-border: #dddddd;
   --color-shadow: rgba(0, 0, 0, 0.08);
+  /* Ajustes para el tema claro del card-gradient */
+  --card-gradient-start: rgba(255, 255, 255, 0.7);
+  --card-gradient-end: rgba(240, 240, 240, 0.7);
+  --card-border-color: rgba(0, 0, 0, 0.08);
 }

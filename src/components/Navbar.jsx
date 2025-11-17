@@ -3,11 +3,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css'; // 2. Importaremos CSS propio para el layout
 
+
 function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-  <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(0); }} className="logo-link-themed">
+  <Link to="/" className="logo-link-themed">
     <span className="logo-P">P</span>
     <span className="logo-L">L</span>
     <span className="logo-U">U</span>
@@ -18,7 +19,7 @@ function Navbar() {
     <span className="logo-T">T</span>
     <span className="logo-R">R</span>
     <span className="logo-A">A</span>
-  </a>
+  </Link>
 </div>
       <ul className="navbar-links">
         <li>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './Navbar.css';
 // Gráficos de pastel (Pie) para estadísticas
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -198,12 +199,11 @@ function FormularioRegistro({ onAuthSuccess, onGoToLogin }) {
 
 
 // --- (¡MODIFICADO!) Componente Navbar (Ahora recibe props de usuario) ---
-const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdateNickname, onUploadProfilePhoto }) => {
+const Navbar = ({ onNavigate, currentUser, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [newProfilePicUrl, setNewProfilePicUrl] = useState(currentUser?.user?.profilePicUrl || '');
-  const [newNickname, setNewNickname] = useState(currentUser?.user?.nickname || '');
-  const [photoFile, setPhotoFile] = useState(null);
+  const [friendQuery, setFriendQuery] = useState('');
+  const [friendAddMessage, setFriendAddMessage] = useState('');
   const profileMenuRef = useRef(null);
 
   // Modificamos esta para que no se encargue de la lógica, solo de pasar el número
@@ -224,6 +224,29 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdat
     setIsProfileMenuOpen(prev => !prev);
   };
 
+  const handleAddFriend = async (e) => {
+    e.preventDefault();
+    setFriendAddMessage('');
+    const value = friendQuery.trim();
+    if (!value) return;
+    try {
+      const res = await fetch(`${API_URL}/friends/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(currentUser?.token ? { 'Authorization': `Bearer ${currentUser.token}` } : {})
+        },
+        body: JSON.stringify({ email: value })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Error al agregar amigo');
+      setFriendAddMessage(`Agregado: ${data.friend?.nickname || data.friend?.email}`);
+      setFriendQuery('');
+    } catch (err) {
+      setFriendAddMessage(err.message);
+    }
+  };
+
   useEffect(() => {
     const onDocClick = (e) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
@@ -236,11 +259,19 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdat
   
   return (
     <nav className="navbar">
+      
+      {/* --- ¡ESTE ES EL CAMBIO! --- */}
       <div className="navbar-logo">
         <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick(0); }}>
-          PLUS ULTRA
+          <img 
+            src="/plus-ultra-logo.png"  /* Apunta a /public/plus-ultra-logo.png */
+            alt="Plus Ultra Logo" 
+            className="navbar-logo-img" /* La clase que añadirás en Navbar.css */
+          />
         </a>
       </div>
+      {/* --- FIN DEL CAMBIO --- */}
+
 
       <button 
         className="navbar-toggle" 
@@ -275,18 +306,38 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdat
               </a>
               {isProfileMenuOpen && (
                 <div className="profile-menu">
+                  <h3 className="secondary-title" style={{ marginBottom: '0.75rem' }}>Panel de Usuario</h3>
                   <div className="profile-menu-row">
-                    <button className="btn btn-save" onClick={(e) => { e.preventDefault(); handleNavClick(7); setIsProfileMenuOpen(false); }}>
+                    <button className="button button-blue" style={{ width: '100%' }} onClick={(e) => { e.preventDefault(); handleNavClick(7); setIsProfileMenuOpen(false); }}>
                       Perfil
                     </button>
                   </div>
                   <div className="profile-menu-row">
-                    <button className="btn btn-save" onClick={(e) => { e.preventDefault(); handleNavClick(8); setIsProfileMenuOpen(false); }}>
+                    <button className="button button-blue" style={{ width: '100%' }} onClick={(e) => { e.preventDefault(); handleNavClick(8); setIsProfileMenuOpen(false); }}>
                       Configuración
                     </button>
                   </div>
+                  <div className="profile-menu-divider" />
+                  <div className="profile-menu-row" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>Amigos</div>
+                    <form onSubmit={handleAddFriend} style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        type="text"
+                        value={friendQuery}
+                        onChange={(e) => setFriendQuery(e.target.value)}
+                        placeholder="Email del amigo"
+                        aria-label="Email del amigo"
+                        style={{ flex: 1, padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid var(--color-border)', background: 'var(--color-bg-input)', color: 'var(--color-text-primary)' }}
+                      />
+                      <button type="submit" className="button button-blue" style={{ whiteSpace: 'nowrap' }}>Agregar</button>
+                    </form>
+                    {friendAddMessage && (
+                      <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>{friendAddMessage}</div>
+                    )}
+                  </div>
+                  <div className="profile-menu-divider" />
                   <div className="profile-menu-row">
-                    <button className="btn btn-logout" onClick={(e) => { e.preventDefault(); handleLogoutClick(); }}>
+                    <button className="button button-red" style={{ width: '100%' }} onClick={(e) => { e.preventDefault(); handleLogoutClick(); }}>
                       Cerrar sesión
                     </button>
                   </div>
@@ -697,7 +748,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
 // --- (¡REEMPLAZADO!) Componente EstadisticasPersonales ---
 // Esta es la nueva versión que carga sus propios datos y muestra gráficos
 const EstadisticasPersonales = ({ onBack }) => {
-    // ... (El código de este componente no necesita cambios) ...
+    // ... (Este componente no cambia) ...
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -795,7 +846,8 @@ const EstadisticasPersonales = ({ onBack }) => {
 };
 
 // --- Componente del Feed de Actividad (como pestaña lateral izquierda con hover) ---
-const ActivityFeed = ({ onViewDetails }) => {
+const ActivityFeed = ({ onViewDetails, juegos = [], friends = [] }) => {
+  // ... (Este componente no cambia) ...
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -812,12 +864,47 @@ const ActivityFeed = ({ onViewDetails }) => {
       }
     };
     fetchFeed();
-  }, []);
+  }, []); 
 
   return (
     <div className="activity-feed-tab" aria-label="Actividad Reciente">
       <div className="activity-feed-content shadow-lg">
         <div className="activity-feed-header">Actividad Reciente</div>
+        {/* Resumen compacto de estadísticas del usuario */}
+        <div className="activity-summary">
+          <div className="activity-summary-item">
+            <span className="summary-label">Juegos</span>
+            <span className="summary-value">{juegos.length}</span>
+          </div>
+          <div className="activity-summary-item">
+            <span className="summary-label">Completados</span>
+            <span className="summary-value">{juegos.filter(j => j.completado).length}</span>
+          </div>
+          <div className="activity-summary-item">
+            <span className="summary-label">Pendientes</span>
+            <span className="summary-value">{juegos.filter(j => !j.completado).length}</span>
+          </div>
+        </div>
+
+        {/* Sección de amigos (placeholder si no hay backend) */}
+        <div className="friends-section">
+          <div className="friends-header">Amigos</div>
+          {friends && friends.length > 0 ? (
+            <div className="friends-list">
+              {friends.map((f) => (
+                <div key={f.id} className="friend-item">
+                  <img src={f.profilePicUrl || '/vite.svg'} alt={f.nickname || 'usuario'} />
+                  <div className="friend-info">
+                    <div className="friend-name">{f.nickname || f.email}</div>
+                    <div className="friend-status">{f.status || 'Sin estado'}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="friends-empty">Aún no has agregado amigos.</div>
+          )}
+        </div>
         {loading ? (
           <div style={{color: 'var(--color-text-secondary)', textAlign: 'center', padding: '0.75rem'}}>Cargando feed...</div>
         ) : activities.length === 0 ? (
@@ -862,6 +949,7 @@ const App = () => {
     // --- ¡NUEVO! ESTADO DE AUTENTICACIÓN ---
     // 'currentUser' guardará { token, user }
     const [currentUser, setCurrentUser] = useState(null);
+    const [friends, setFriends] = useState([]);
 
     // --- ¡NUEVO! Cargar usuario desde localStorage al iniciar la app
     useEffect(() => {
@@ -871,6 +959,20 @@ const App = () => {
         }
     }, []); // El array vacío [] significa que esto se ejecuta solo una vez al inicio
 
+    useEffect(() => {
+        const loadFriends = async () => {
+            if (!currentUser?.token) { setFriends([]); return; }
+            try {
+                const res = await fetch(`${API_URL}/friends/list`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                const data = await res.json();
+                setFriends(data.friends || []);
+            } catch (_ERR) {
+                setFriends([]);
+                void _ERR;
+            }
+        };
+        loadFriends();
+    }, [currentUser]);
     
     // --- LÓGICA DE DATOS Y API ---
     const fetchJuegos = async () => {
@@ -1047,6 +1149,7 @@ const App = () => {
                     ...currentUser.user,
                     profilePicUrl: data.user.profilePicUrl,
                     nickname: data.user.nickname,
+                    phrase: data.user.phrase,
                 }
             };
             setCurrentUser(updated);
@@ -1076,6 +1179,7 @@ const App = () => {
                     ...currentUser.user,
                     profilePicUrl: data.user.profilePicUrl,
                     nickname: data.user.nickname,
+                    phrase: data.user.phrase,
                 }
             };
             setCurrentUser(updated);
@@ -1106,6 +1210,7 @@ const App = () => {
                     ...currentUser.user,
                     profilePicUrl: data.user.profilePicUrl,
                     nickname: data.user.nickname,
+                    phrase: data.user.phrase,
                 }
             };
             setCurrentUser(updated);
@@ -1128,7 +1233,7 @@ const App = () => {
                     {successMessage}
                   </div>
                 )}
-                <ActivityFeed onViewDetails={handleViewDetails} />
+                <ActivityFeed onViewDetails={handleViewDetails} juegos={juegos} currentUser={currentUser} friends={friends} />
                 <div className="form-card shadow-lg" style={{ marginTop: '2rem', marginBottom: '1.5rem', padding: '1rem' }}>
                     <input
                         type="text"
@@ -1198,10 +1303,10 @@ const App = () => {
                 )}
             </div>
         );
-  };
-
-  // --- Nueva Vista: Perfil estilo Steam (editar apodo, frase y avatar) ---
-  const PerfilView = () => {
+    };
+    
+// --- Nueva Vista: Perfil estilo Steam (editar apodo, frase y avatar) ---
+  const PerfilView = ({ currentUser, setCurrentUser, handleUpdateNickname, handleUpdateProfilePic, handleUploadProfilePhoto, friends = [] }) => {
     const [nickname, setNickname] = useState(currentUser?.user?.nickname || '');
     const [phrase, setPhrase] = useState(currentUser?.user?.phrase || '');
     const [url, setUrl] = useState(currentUser?.user?.profilePicUrl || '');
@@ -1253,6 +1358,24 @@ const App = () => {
                 <textarea className="textarea-field" rows={3} value={phrase} onChange={(e) => setPhrase(e.target.value)} />
                 <button className="button button-green" type="submit" style={{ marginTop: '0.5rem' }}>Guardar frase</button>
               </form>
+              <div style={{ marginTop: '1.5rem' }}>
+                <div style={{ color: 'var(--color-text-primary)', fontWeight: 700, marginBottom: '0.5rem' }}>Amigos</div>
+                {friends && friends.length > 0 ? (
+                  <div className="friends-list">
+                    {friends.map((f) => (
+                      <div key={f.id} className="friend-item">
+                        <img src={f.profilePicUrl || '/vite.svg'} alt={f.nickname || 'usuario'} />
+                        <div className="friend-info">
+                          <div className="friend-name">{f.nickname || f.email}</div>
+                          <div className="friend-status">{f.phrase || ''}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="friends-empty">Aún no has agregado amigos.</div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -1327,7 +1450,16 @@ const App = () => {
             default:
                 return <BibliotecaJuegos />;
             case 7:
-                return <PerfilView />;
+                return (
+                  <PerfilView 
+                    currentUser={currentUser}
+                    setCurrentUser={setCurrentUser}
+                    handleUpdateNickname={handleUpdateNickname}
+                    handleUpdateProfilePic={handleUpdateProfilePic}
+                    handleUploadProfilePhoto={handleUploadProfilePhoto}
+                    friends={friends}
+                  />
+                );
             case 8:
                 return <SettingsView />;
         }
