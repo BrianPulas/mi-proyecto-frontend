@@ -198,10 +198,12 @@ function FormularioRegistro({ onAuthSuccess, onGoToLogin }) {
 
 
 // --- (¡MODIFICADO!) Componente Navbar (Ahora recibe props de usuario) ---
-const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic }) => {
+const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdateNickname, onUploadProfilePhoto }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [newProfilePicUrl, setNewProfilePicUrl] = useState(currentUser?.user?.profilePicUrl || '');
+  const [newNickname, setNewNickname] = useState(currentUser?.user?.nickname || '');
+  const [photoFile, setPhotoFile] = useState(null);
   const profileMenuRef = useRef(null);
 
   // Modificamos esta para que no se encargue de la lógica, solo de pasar el número
@@ -274,15 +276,13 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic }) => {
               {isProfileMenuOpen && (
                 <div className="profile-menu">
                   <div className="profile-menu-row">
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder="URL de imagen"
-                      value={newProfilePicUrl}
-                      onChange={(e) => setNewProfilePicUrl(e.target.value)}
-                    />
-                    <button className="btn btn-save" onClick={(e) => { e.preventDefault(); const clean = (newProfilePicUrl || '').trim(); if (!clean) return; onUpdateProfilePic(clean); setIsProfileMenuOpen(false); }}>
-                      Guardar
+                    <button className="btn btn-save" onClick={(e) => { e.preventDefault(); handleNavClick(7); setIsProfileMenuOpen(false); }}>
+                      Perfil
+                    </button>
+                  </div>
+                  <div className="profile-menu-row">
+                    <button className="btn btn-save" onClick={(e) => { e.preventDefault(); handleNavClick(8); setIsProfileMenuOpen(false); }}>
+                      Configuración
                     </button>
                   </div>
                   <div className="profile-menu-row">
@@ -857,6 +857,7 @@ const App = () => {
     const [filterCompletado, setFilterCompletado] = useState('');
     const [ordenarPor, setOrdenarPor] = useState('fechaCreacion');
     const [reviewUpdateTrigger, setReviewUpdateTrigger] = useState(0);
+    const [successMessage, setSuccessMessage] = useState('');
 
     // --- ¡NUEVO! ESTADO DE AUTENTICACIÓN ---
     // 'currentUser' guardará { token, user }
@@ -901,6 +902,14 @@ const App = () => {
         }
     }, [view, searchTerm, filterGenero, filterPlataforma, filterCompletado, ordenarPor, reviewUpdateTrigger]);
 
+    // Limpiar mensajes de éxito automáticamente al volver a Home
+    useEffect(() => {
+        if (view === 0 && successMessage) {
+            const t = setTimeout(() => setSuccessMessage(''), 3000);
+            return () => clearTimeout(t);
+        }
+    }, [view, successMessage]);
+
     const handleSaveJuego = async (juegoData, isEdit) => {
         setLoading(true);
         try {
@@ -926,7 +935,9 @@ const App = () => {
             if (isEdit && view === 3) {
                 setJuegoSeleccionado(updatedJuego);
             }
-            setView(0); 
+            // Mensaje de éxito y redirección a Home
+            setSuccessMessage(isEdit ? 'Juego actualizado con éxito' : 'Juego añadido con éxito');
+            setView(0);
         } catch (err) {
             setError(err.message); 
         } finally {
@@ -1045,6 +1056,65 @@ const App = () => {
         }
     };
 
+    // Actualizar apodo/nickname del usuario
+    const handleUpdateNickname = async (newNickname) => {
+        if (!currentUser) return;
+        try {
+            const response = await fetch(`${API_URL}/auth/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentUser.token}`
+                },
+                body: JSON.stringify({ nickname: newNickname })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Error al actualizar apodo');
+            const updated = {
+                ...currentUser,
+                user: {
+                    ...currentUser.user,
+                    profilePicUrl: data.user.profilePicUrl,
+                    nickname: data.user.nickname,
+                }
+            };
+            setCurrentUser(updated);
+            localStorage.setItem('plusUltraUser', JSON.stringify(updated));
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    // Subir una nueva foto de perfil desde el dispositivo
+    const handleUploadProfilePhoto = async (file) => {
+        if (!currentUser || !file) return;
+        try {
+            const formData = new FormData();
+            formData.append('photo', file);
+            const response = await fetch(`${API_URL}/auth/profile/photo`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${currentUser.token}`
+                },
+                body: formData
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Error al subir la foto');
+            const updated = {
+                ...currentUser,
+                user: {
+                    ...currentUser.user,
+                    profilePicUrl: data.user.profilePicUrl,
+                    nickname: data.user.nickname,
+                }
+            };
+            setCurrentUser(updated);
+            localStorage.setItem('plusUltraUser', JSON.stringify(updated));
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
 
     // --- Componente Vista Principal (BibliotecaJuegos) ---
     const BibliotecaJuegos = () => {
@@ -1053,6 +1123,11 @@ const App = () => {
         const plataformas = ["PC", "PlayStation", "Xbox", "Nintendo Switch", "Móvil"];
         return (
             <div className="app-container">
+                {successMessage && (
+                  <div className="success-banner" style={{ backgroundColor: 'var(--color-green-bg)', color: 'var(--color-green-text)', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid var(--color-border)', marginBottom: '1rem', textAlign: 'center' }}>
+                    {successMessage}
+                  </div>
+                )}
                 <ActivityFeed onViewDetails={handleViewDetails} />
                 <div className="form-card shadow-lg" style={{ marginTop: '2rem', marginBottom: '1.5rem', padding: '1rem' }}>
                     <input
@@ -1123,7 +1198,95 @@ const App = () => {
                 )}
             </div>
         );
+  };
+
+  // --- Nueva Vista: Perfil estilo Steam (editar apodo, frase y avatar) ---
+  const PerfilView = () => {
+    const [nickname, setNickname] = useState(currentUser?.user?.nickname || '');
+    const [phrase, setPhrase] = useState(currentUser?.user?.phrase || '');
+    const [url, setUrl] = useState(currentUser?.user?.profilePicUrl || '');
+    const [file, setFile] = useState(null);
+
+    const avatarSrc = (currentUser?.user?.profilePicUrl && currentUser.user.profilePicUrl.trim()) ? currentUser.user.profilePicUrl : '/vite.svg';
+
+    const saveNickname = async (e) => { e.preventDefault(); const nick = (nickname || '').trim(); if (!nick) return; await handleUpdateNickname(nick); };
+    const savePhrase = async (e) => { e.preventDefault(); const text = (phrase || '').trim(); if (!currentUser) return; try {
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` }, body: JSON.stringify({ phrase: text })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Error al actualizar frase');
+      const updated = { ...currentUser, user: { ...currentUser.user, profilePicUrl: data.user.profilePicUrl, nickname: data.user.nickname, phrase: data.user.phrase } };
+      setCurrentUser(updated);
+      localStorage.setItem('plusUltraUser', JSON.stringify(updated));
+    } catch (err) { alert(err.message); }
     };
+    const saveUrl = async (e) => { e.preventDefault(); const clean = (url || '').trim(); if (!clean) return; await handleUpdateProfilePic(clean); };
+    const uploadFile = async (e) => { e.preventDefault(); if (!file) return; await handleUploadProfilePhoto(file); setFile(null); };
+
+    return (
+      <div className="app-container">
+        <div className="form-card shadow-lg" style={{ maxWidth: '900px' }}>
+          <h2 style={{ marginBottom: '1rem' }}>Tu Perfil</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1.5rem' }}>
+            <div>
+              <img src={avatarSrc} alt="avatar" style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--color-border)' }} />
+              <div style={{ marginTop: '1rem' }}>
+                <form onSubmit={uploadFile} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                  <button className="button button-blue" type="submit">Subir foto</button>
+                </form>
+                <form onSubmit={saveUrl} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+                  <input type="text" className="input-field" placeholder="URL de imagen" value={url} onChange={(e) => setUrl(e.target.value)} />
+                  <button className="button button-green" type="submit">Guardar URL</button>
+                </form>
+              </div>
+            </div>
+            <div>
+              <form onSubmit={saveNickname}>
+                <label>Apodo</label>
+                <input className="input-field" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+                <button className="button button-green" type="submit" style={{ marginTop: '0.5rem' }}>Guardar apodo</button>
+              </form>
+              <form onSubmit={savePhrase} style={{ marginTop: '1rem' }}>
+                <label>Frase de perfil</label>
+                <textarea className="textarea-field" rows={3} value={phrase} onChange={(e) => setPhrase(e.target.value)} />
+                <button className="button button-green" type="submit" style={{ marginTop: '0.5rem' }}>Guardar frase</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // --- Nueva Vista: Configuración con tema claro/oscuro ---
+  const SettingsView = () => {
+    const [theme, setTheme] = useState(() => localStorage.getItem('plusUltraTheme') || 'dark');
+    useEffect(() => {
+      const body = document.body;
+      if (theme === 'light') {
+        body.classList.add('light');
+      } else {
+        body.classList.remove('light');
+      }
+      localStorage.setItem('plusUltraTheme', theme);
+    }, [theme]);
+    return (
+      <div className="app-container">
+        <div className="form-card shadow-lg" style={{ maxWidth: '700px' }}>
+          <h2>Configuración</h2>
+          <div style={{ marginTop: '1rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem' }}>Tema</label>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button className="button button-blue" onClick={() => setTheme('dark')}>Oscuro</button>
+              <button className="button button-blue" onClick={() => setTheme('light')}>Claro</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
     
     // --- (¡MODIFICADO!) Renderizado principal (Router simple) ---
     const renderContent = () => {
@@ -1163,6 +1326,10 @@ const App = () => {
             case 0:
             default:
                 return <BibliotecaJuegos />;
+            case 7:
+                return <PerfilView />;
+            case 8:
+                return <SettingsView />;
         }
     };
 
@@ -1175,6 +1342,8 @@ const App = () => {
                 currentUser={currentUser}
                 onLogout={handleLogout}
                 onUpdateProfilePic={handleUpdateProfilePic}
+                onUpdateNickname={handleUpdateNickname}
+                onUploadProfilePhoto={handleUploadProfilePhoto}
             />
             
             {renderContent()}

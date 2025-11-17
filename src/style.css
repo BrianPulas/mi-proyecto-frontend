@@ -349,3 +349,14 @@ a:hover {
   max-height: 300px;
   max-width: 100%;
 }
+
+/* --- Overrides para tema claro --- */
+body.light {
+  --color-bg-main: #ffffff;
+  --color-bg-card: #f7f7f7;
+  --color-bg-input: #f0f0f0;
+  --color-text-primary: #213547;
+  --color-text-secondary: #666666;
+  --color-border: #dddddd;
+  --color-shadow: rgba(0, 0, 0, 0.08);
+}
