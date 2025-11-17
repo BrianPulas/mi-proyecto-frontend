@@ -249,7 +249,7 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
     </div>
 );
 
-// --- Componente FormularioJuego ---
+// --- (¡MODIFICADO!) Componente FormularioJuego ---
 const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
     const isEdit = !!juegoInicial._id;
     const [juego, setJuego] = useState({
@@ -264,12 +264,74 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
         ...juegoInicial
     });
 
+    // --- ¡NUEVO! Estados para la búsqueda ---
+    const [searchResults, setSearchResults] = useState([]);
+    const [loadingSearch, setLoadingSearch] = useState(false);
+
+    // --- ¡NUEVO! Efecto "Debounce" para la búsqueda ---
+    // Esto evita que hagamos una llamada a la API en cada pulsación de tecla.
+    useEffect(() => {
+        // Si el título está vacío o estamos editando, no busques.
+        if (isEdit || !juego.titulo.trim()) {
+            setSearchResults([]); // Limpia resultados
+            return;
+        }
+
+        setLoadingSearch(true);
+
+        // Configura un temporizador
+        const searchTimer = setTimeout(async () => {
+            try {
+                // Codifica el título para URL (evita errores con espacios/símbolos)
+                const q = encodeURIComponent(juego.titulo.trim());
+                // Llama a NUESTRO backend, no a RAWG directamente
+                const response = await fetch(`/api/search-game/${q}`);
+                if (!response.ok) {
+                    // Evita throw; guarda el error con más contexto
+                    const msg = `Error en la búsqueda (HTTP ${response.status})`;
+                    console.error(msg);
+                    setSearchResults([]);
+                    return;
+                }
+                
+                const data = await response.json();
+                setSearchResults(data);
+
+            } catch (error) {
+                console.error('Busqueda fallida:', error);
+                setSearchResults([]); // Limpia en caso de error
+            } finally {
+                setLoadingSearch(false);
+            }
+        }, 500); // Espera 500ms después de que el usuario deja de escribir
+
+        // Función de limpieza: se ejecuta si el usuario sigue escribiendo
+        return () => clearTimeout(searchTimer);
+
+    }, [juego.titulo, isEdit]); // Se activa cada vez que 'juego.titulo' cambia
+
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setJuego(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+    };
+
+    // --- ¡NUEVO! Función para auto-rellenar ---
+    const handleSelectGame = (game) => {
+        setJuego(prev => ({
+            ...prev,
+            titulo: game.name,
+            añoLanzamiento: game.released,
+            imagenPortada: game.background_image,
+            // (Si RAWG te da otros datos, puedes rellenarlos aquí)
+            // desarrollador: game.developer || '',
+        }));
+        
+        // Escondemos los resultados
+        setSearchResults([]);
     };
 
     const handleSubmit = (e) => {
@@ -282,20 +344,45 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
 
     return (
         <form onSubmit={handleSubmit} className="form-card shadow-lg">
-            {/* --- (MODIFICADO) Limpiado estilo en línea --- */}
             <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
               {isEdit ? 'Editar Juego' : 'Añadir Nuevo Juego'}
             </h2>
 
             <div className="form-grid">
-                <input
-                    name="titulo"
-                    value={juego.titulo}
-                    onChange={handleChange}
-                    placeholder="Título del Videojuego *"
-                    required
-                    className="input-field"
-                />
+                
+                {/* --- CAMPO DE TÍTULO (con buscador) --- */}
+                <div style={{ position: 'relative' }}> {/* Contenedor relativo para el desplegable */}
+                    <input
+                        name="titulo"
+                        value={juego.titulo}
+                        onChange={handleChange}
+                        placeholder="Título del Videojuego *"
+                        required
+                        className="input-field"
+                        autoComplete="off" // Evita el autocompletado del navegador
+                        disabled={isEdit} // Desactivado si estamos editando
+                    />
+                    
+                    {/* --- ¡NUEVO! El desplegable de resultados --- */}
+                    { (loadingSearch || searchResults.length > 0) && (
+                        <div className="search-results-container">
+                            {loadingSearch && <div className="search-loading">Buscando...</div>}
+                            
+                            {searchResults.map(game => (
+                                <div 
+                                    key={game.id} 
+                                    className="search-result-item"
+                                    onClick={() => handleSelectGame(game)}
+                                >
+                                    <img src={game.background_image} alt="" />
+                                    <span>{game.name} ({game.released})</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                
+                {/* --- Resto del formulario --- */}
                 <input
                     name="desarrollador"
                     value={juego.desarrollador}

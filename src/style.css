@@ -292,3 +292,51 @@ a:hover {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+/* ------------------------------------------- */
+/* (¡NUEVO!) Estilos para el Buscador (RAWG) */
+/* ------------------------------------------- */
+
+.search-results-container {
+  position: absolute;
+  top: 100%; /* Justo debajo del input */
+  left: 0;
+  right: 0;
+  background-color: var(--color-bg-input); /* Fondo de input */
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 6px 6px; /* Redondeado solo abajo */
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 100; /* Por encima de otros elementos */
+}
+
+.search-loading {
+  padding: 0.75rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+  background-color: var(--color-bg-card); /* Un poco más oscuro */
+}
+
+.search-result-item img {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.search-result-item span {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+}
