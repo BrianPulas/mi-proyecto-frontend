@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+// Gráficos de pastel (Pie) para estadísticas
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 // ... (tus imports de CSS, etc.)
 
@@ -26,15 +30,35 @@ const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
     </button>
 );
 
-// --- Componente FormularioLogin ---
-function FormularioLogin({ onLogin, onGoToRegister }) {
+// --- (¡MODIFICADO!) FormularioLogin (Ahora hace fetch) ---
+function FormularioLogin({ onAuthSuccess, onGoToRegister }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null); // Estado para mensajes de error
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Iniciando sesión con:", email, password);
-    onLogin(); 
+    setError(null); // Limpia errores anteriores
+
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al iniciar sesión');
+      }
+      
+      // Si todo fue bien, pasamos los datos (token y user) al App principal
+      onAuthSuccess(data);
+
+    } catch (err) {
+      setError(err.message); // Muestra el error al usuario
+    }
   };
 
   return (
@@ -42,7 +66,12 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
       <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
         Iniciar Sesión
       </h2>
+      
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        
+        {/* --- ¡NUEVO! Muestra el error --- */}
+        {error && <p style={{ color: 'var(--color-red-text)', backgroundColor: 'var(--color-red-bg)', padding: '0.5rem', borderRadius: '6px', textAlign: 'center' }}>{error}</p>}
+
         <input
           type="email"
           name="email"
@@ -65,6 +94,7 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
           Entrar
         </Button>
       </div>
+
       <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
         ¿No tienes cuenta?{' '}
         <a href="#" onClick={(e) => { e.preventDefault(); onGoToRegister(); }}>
@@ -75,20 +105,42 @@ function FormularioLogin({ onLogin, onGoToRegister }) {
   );
 };
 
-// --- (¡NUEVO!) Componente FormularioRegistro ---
-function FormularioRegistro({ onRegister, onGoToLogin }) {
+// --- (¡MODIFICADO!) FormularioRegistro (Ahora hace fetch) ---
+function FormularioRegistro({ onAuthSuccess, onGoToLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState(null); // Estado para mensajes de error
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validación
     if (password !== confirmPassword) {
-      alert("Las contraseñas no coinciden.");
+      setError("Las contraseñas no coinciden.");
       return;
     }
-    console.log("Registrando con:", email, password);
-    onRegister(); 
+    setError(null); // Limpia errores
+
+    try {
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al registrar usuario');
+      }
+
+      // Si todo fue bien, pasamos los datos (token y user) al App principal
+      onAuthSuccess(data);
+
+    } catch (err) {
+      setError(err.message); // Muestra el error al usuario
+    }
   };
 
   return (
@@ -96,7 +148,12 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
       <h2 className="text-3xl font-extrabold mb-6" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
         Crear Cuenta
       </h2>
+      
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+        {/* --- ¡NUEVO! Muestra el error --- */}
+        {error && <p style={{ color: 'var(--color-red-text)', backgroundColor: 'var(--color-red-bg)', padding: '0.5rem', borderRadius: '6px', textAlign: 'center' }}>{error}</p>}
+
         <input
           type="email"
           name="email"
@@ -111,7 +168,7 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Contraseña"
+          placeholder="Contraseña (min. 6 caracteres)"
           required
           className="input-field"
         />
@@ -128,6 +185,7 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
           Registrarse
         </Button>
       </div>
+
       <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
         ¿Ya tienes cuenta?{' '}
         <a href="#" onClick={(e) => { e.preventDefault(); onGoToLogin(); }}>
@@ -139,21 +197,49 @@ function FormularioRegistro({ onRegister, onGoToLogin }) {
 };
 
 
-// --- Componente Navbar ---
-const Navbar = ({ onNavigate }) => {
+// --- (¡MODIFICADO!) Componente Navbar (Ahora recibe props de usuario) ---
+const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const handleNavigate = (view) => {
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [newProfilePicUrl, setNewProfilePicUrl] = useState(currentUser?.user?.profilePicUrl || '');
+  const profileMenuRef = useRef(null);
+
+  // Modificamos esta para que no se encargue de la lógica, solo de pasar el número
+  const handleNavClick = (view) => {
     onNavigate(view);
     setIsMenuOpen(false); 
   };
+
+  // Nueva función para el botón de logout
+  const handleLogoutClick = () => {
+    onLogout();
+    setIsMenuOpen(false);
+    setIsProfileMenuOpen(false);
+  };
+  
+  const toggleProfileMenu = (e) => {
+    e.preventDefault();
+    setIsProfileMenuOpen(prev => !prev);
+  };
+
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, []);
   
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(0); }}>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick(0); }}>
           PLUS ULTRA
         </a>
       </div>
+
       <button 
         className="navbar-toggle" 
         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -163,22 +249,59 @@ const Navbar = ({ onNavigate }) => {
         <span></span>
         <span></span>
       </button>
+
+      {/* --- ¡MODIFICADO! Lógica de renderizado condicional --- */}
       <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
         <li>
-          <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(1); }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick(1); }}>
             Añadir Juego
           </a>
         </li>
         <li>
-          <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(4); }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick(4); }}>
             Estadísticas
           </a>
         </li>
-        <li>
-          <a href="#" onClick={(e) => { e.preventDefault(); handleNavigate(5); }} style={{color: 'var(--color-blue-text)'}}>
-            Iniciar Sesión
-          </a>
-        </li>
+
+        {/* Si hay un usuario, muestra su perfil y botón de salir. */}
+        {currentUser ? (
+          <>
+            <li className="navbar-profile-container" ref={profileMenuRef}>
+              <a href="#" onClick={toggleProfileMenu} className="navbar-profile">
+                <img src={currentUser.user.profilePicUrl || '/vite.svg'} alt={currentUser.user.nickname} />
+                <span>{currentUser.user.nickname}</span>
+              </a>
+              {isProfileMenuOpen && (
+                <div className="profile-menu">
+                  <div className="profile-menu-row">
+                    <input
+                      type="text"
+                      className="input-field"
+                      placeholder="URL de imagen"
+                      value={newProfilePicUrl}
+                      onChange={(e) => setNewProfilePicUrl(e.target.value)}
+                    />
+                    <button className="btn btn-save" onClick={(e) => { e.preventDefault(); const clean = (newProfilePicUrl || '').trim(); if (!clean) return; onUpdateProfilePic(clean); setIsProfileMenuOpen(false); }}>
+                      Guardar
+                    </button>
+                  </div>
+                  <div className="profile-menu-row">
+                    <button className="btn btn-logout" onClick={(e) => { e.preventDefault(); handleLogoutClick(); }}>
+                      Cerrar sesión
+                    </button>
+                  </div>
+                </div>
+              )}
+            </li>
+          </>
+        ) : (
+          // Si NO hay usuario, muestra el botón de Iniciar Sesión.
+          <li>
+            <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick(5); }} style={{color: 'var(--color-blue-text)'}}>
+              Iniciar Sesión
+            </a>
+          </li>
+        )}
       </ul>
     </nav>
   );
@@ -187,6 +310,7 @@ const Navbar = ({ onNavigate }) => {
 
 // --- Componente TarjetaJuego ---
 const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
+    // ... (Este componente no cambia) ...
     <div className="game-card shadow-lg">
         <img
             src={juego.imagenPortada}
@@ -219,6 +343,7 @@ const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
 
 // --- Componente FormularioJuego ---
 const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
+    // ... (Este componente no cambia) ...
     const isEdit = !!juegoInicial._id;
     const [juego, setJuego] = useState({
         titulo: '',
@@ -231,10 +356,8 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
         completado: false,
         ...juegoInicial
     });
-
     const [searchResults, setSearchResults] = useState([]);
     const [loadingSearch, setLoadingSearch] = useState(false);
-
     useEffect(() => {
         if (isEdit || !juego.titulo.trim()) {
             setSearchResults([]); 
@@ -256,7 +379,6 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
         }, 500); 
         return () => clearTimeout(searchTimer);
     }, [juego.titulo, isEdit]); 
-
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setJuego(prev => ({
@@ -264,7 +386,6 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
-
     const handleSelectGame = (game) => {
         setJuego(prev => ({
             ...prev,
@@ -274,12 +395,10 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
         }));
         setSearchResults([]);
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave(juego, isEdit);
     };
-
     const generos = ["Acción", "Aventura", "RPG", "Estrategia", "Simulación", "Deportes"];
     const plataformas = ["PC", "PlayStation", "Xbox", "Nintendo Switch", "Móvil"];
 
@@ -309,7 +428,9 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
                                     className="search-result-item"
                                     onClick={() => handleSelectGame(game)}
                                 >
-                                    <img src={game.background_image} alt="" />
+                                    {game.background_image ? (
+                                      <img src={game.background_image} alt="" />
+                                    ) : null}
                                     <span>{game.name} ({game.released})</span>
                                 </div>
                             ))}
@@ -378,12 +499,11 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
 
 // --- Componente DetalleJuego / FormularioReseña / ListaReseñas ---
 const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateReviews }) => {
-    // ... (El código de este componente no necesita cambios)
+    // ... (Este componente no cambia) ...
     const [reseñas, setReseñas] = useState([]);
     const [isAddingReview, setIsAddingReview] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const fetchReseñas = async () => {
         setLoading(true);
         setError(null);
@@ -398,13 +518,11 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             setLoading(false);
         }
     };
-
     useEffect(() => {
         if (juego._id) {
             fetchReseñas();
         }
     }, [juego._id]);
-
     const handleReviewSubmit = async (reseñaData) => {
         setLoading(true);
         try {
@@ -416,9 +534,7 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...reseñaData, juegoId: juego._id })
             });
-
             if (!response.ok) throw new Error(`Error al ${method === 'POST' ? 'crear' : 'actualizar'} reseña`);
-            
             setIsAddingReview(false);
             fetchReseñas(); 
             onUpdateReviews(); 
@@ -428,7 +544,6 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             setLoading(false);
         }
     };
-
     const handleDeleteReview = async (reviewId) => {
         if (!window.confirm("¿Estás seguro de que quieres eliminar esta reseña?")) return;
         setLoading(true);
@@ -443,7 +558,6 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             setLoading(false);
         }
     };
-
     const ReviewForm = ({ reviewInitial = {}, onSave, onCancel }) => {
         const isEdit = !!reviewInitial._id;
         const [review, setReview] = useState({
@@ -454,7 +568,6 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             recomendaria: true,
             ...reviewInitial
         });
-
         const handleChange = (e) => {
             const { name, value, type, checked } = e.target;
             setReview(prev => ({
@@ -462,43 +575,22 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                 [name]: type === 'checkbox' ? checked : type === 'number' ? parseInt(value) : value
             }));
         };
-
         const handleSubmit = (e) => {
             e.preventDefault();
             onSave(review);
         };
-
         return (
             <form onSubmit={handleSubmit} className="review-form space-y-3">
                 <h4 className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>{isEdit ? 'Editar Reseña' : 'Escribir Nueva Reseña'}</h4>
-                
                 <div className="flex items-center space-x-4">
                     <label style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>Puntuación:</label>
-                    <input
-                        type="number"
-                        name="puntuacion"
-                        value={review.puntuacion}
-                        onChange={handleChange}
-                        min="1" max="5" required
-                        className="input-field"
-                        style={{ width: '4rem', padding: '0.5rem' }}
-                    />
+                    <input type="number" name="puntuacion" value={review.puntuacion} onChange={handleChange} min="1" max="5" required className="input-field" style={{ width: '4rem', padding: '0.5rem' }} />
                     <StarRating puntuacion={review.puntuacion} />
                 </div>
-                
                 <div className="flex items-center space-x-4">
                     <label style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>Horas Jugadas:</label>
-                    <input
-                        type="number"
-                        name="horasJugadas"
-                        value={review.horasJugadas}
-                        onChange={handleChange}
-                        min="0" required
-                        className="input-field"
-                        style={{ width: '6rem', padding: '0.5rem' }}
-                    />
+                    <input type="number" name="horasJugadas" value={review.horasJugadas} onChange={handleChange} min="0" required className="input-field" style={{ width: '6rem', padding: '0.5rem' }} />
                 </div>
-                
                 <div className="flex items-center space-x-4">
                     <label style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>Dificultad:</label>
                     <select name="dificultad" value={review.dificultad} onChange={handleChange} className="select-field" style={{ width: '8rem', padding: '0.5rem' }}>
@@ -507,22 +599,11 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
                         <option value="Difícil">Difícil</option>
                     </select>
                 </div>
-                
                 <div className="checkbox-group">
                     <input type="checkbox" name="recomendaria" checked={review.recomendaria} onChange={handleChange} id="recomendaria" style={{ height: '1rem', width: '1rem', accentColor: 'var(--color-blue-text)' }}/>
                     <label htmlFor="recomendaria" style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>¿Lo recomendarías?</label>
                 </div>
-                
-                <textarea
-                    name="textoReseña"
-                    value={review.textoReseña}
-                    onChange={handleChange}
-                    placeholder="Tu reseña detallada..."
-                    rows="4"
-                    required
-                    className="textarea-field"
-                />
-
+                <textarea name="textoReseña" value={review.textoReseña} onChange={handleChange} placeholder="Tu reseña detallada..." rows="4" required className="textarea-field" />
                 <div className="flex justify-end space-x-3">
                     <Button onClick={onCancel} color="red" type="button">Cancelar</Button>
                     <Button type="submit" color="blue">{isEdit ? 'Guardar Reseña' : 'Enviar Reseña'}</Button>
@@ -530,7 +611,6 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
             </form>
         );
     };
-
     const ReviewCard = ({ reseña }) => {
         const [isEditing, setIsEditing] = useState(false);
         if (isEditing) {
@@ -613,74 +693,112 @@ const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateRevie
     );
 };
 
-// --- Componente EstadisticasPersonales ---
-const EstadisticasPersonales = ({ juegos, onBack }) => {
-    // ... (El código de este componente no necesita cambios)
-    const totalJuegos = juegos.length;
-    const completados = juegos.filter(j => j.completado).length;
-    const porcentajeCompletado = totalJuegos > 0 ? ((completados / totalJuegos) * 100).toFixed(1) : 0;
 
-    const generos = [...new Set(juegos.map(j => j.genero))];
-    const plataformaCount = juegos.reduce((acc, j) => {
-        acc[j.plataforma] = (acc[j.plataforma] || 0) + 1;
-        return acc;
-    }, {});
+// --- (¡REEMPLAZADO!) Componente EstadisticasPersonales ---
+// Esta es la nueva versión que carga sus propios datos y muestra gráficos
+const EstadisticasPersonales = ({ onBack }) => {
+    // ... (El código de este componente no necesita cambios) ...
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`${API_URL}/stats/dashboard`);
+                const data = await response.json();
+                setStats(data);
+            } catch (err) {
+                console.error("Error al cargar estadísticas:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStats();
+    }, []); 
+
+    const getPieChartData = (dataArray) => {
+        const labels = dataArray.map(item => item._id); 
+        const data = dataArray.map(item => item.count); 
+        return {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                borderColor: 'var(--color-bg-card)',
+                borderWidth: 2,
+            }]
+        };
+    };
+
+    const chartOptions = {
+        plugins: {
+            legend: {
+                labels: {
+                    color: 'var(--color-text-primary)'
+                }
+            }
+        }
+    };
+
+    if (loading) {
+        return <div className="app-container" style={{textAlign: 'center', fontSize: '1.25rem'}}>Cargando dashboard...</div>;
+    }
+    if (!stats) {
+        return <div className="app-container">Error al cargar datos.</div>;
+    }
+
+    const porcentajeCompletado = stats.totalJuegos > 0 ? ((stats.completados / stats.totalJuegos) * 100).toFixed(1) : 0;
+    const plataformaChartData = getPieChartData(stats.plataformas);
+    const generoChartData = getPieChartData(stats.generos);
 
     return (
         <div className="app-container">
             <Button onClick={onBack} color="blue" style={{ marginBottom: '1.5rem' }}>← Volver a la Biblioteca</Button>
             <h2 className="header-title" style={{ marginBottom: '2rem' }}>Dashboard Personal</h2>
             <div className="stats-grid">
-                <div className="stats-card stats-card-border-blue">
-                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{totalJuegos}</p>
+                <div className="stats-card">
+                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{stats.totalJuegos}</p>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos en Biblioteca</p>
                 </div>
-                <div className="stats-card stats-card-border-green">
-                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{completados}</p>
+                <div className="stats-card">
+                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{stats.completados}</p>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Juegos Completados</p>
                 </div>
-                <div className="stats-card stats-card-border-yellow">
+                <div className="stats-card">
                     <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{porcentajeCompletado}%</p>
                     <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Progreso General</p>
                 </div>
+                <div className="stats-card">
+                    <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>
+                        {stats.mediaPuntuacion.toFixed(1)} ★
+                    </p>
+                    <p style={{ color: 'var(--color-text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Puntuación Media</p>
+                </div>
             </div>
-            <div className="stats-card" style={{ marginTop: '2rem', textAlign: 'left' }}>
-                <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Plataforma</h3>
-                <ul className="stats-list" style={{ color: 'var(--color-text-secondary)' }}>
-                    {Object.entries(plataformaCount).map(([plataforma, count]) => (
-                        <li key={plataforma}>
-                            <span>🎮 {plataforma}</span>
-                            <span style={{ fontWeight: '700', color: 'var(--color-text-primary)' }}>{count}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className="stats-card" style={{ marginTop: '1.5rem', textAlign: 'left' }}>
-                <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Géneros Rastreados</h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {generos.map(g => (
-                        <span key={g} style={{ 
-                          background: 'var(--color-blue-bg)', 
-                          color: 'var(--color-blue-text)', 
-                          fontSize: '0.875rem', 
-                          fontWeight: '500', 
-                          padding: '0.25rem 0.75rem', 
-                          borderRadius: '9999px' 
-                        }}>
-                            {g}
-                        </span>
-                    ))}
+            <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', marginTop: '2rem' }}>
+                <div className="stats-card" style={{ padding: '2rem' }}>
+                    <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Plataforma</h3>
+                    <div style={{ maxHeight: '300px', display: 'flex', justifyContent: 'center' }}>
+                        <Pie data={plataformaChartData} options={chartOptions} />
+                    </div>
+                </div>
+                <div className="stats-card" style={{ padding: '2rem' }}>
+                    <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Género</h3>
+                    <div style={{ maxHeight: '300px', display: 'flex', justifyContent: 'center' }}>
+                         <Pie data={generoChartData} options={chartOptions} />
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-// --- (¡NUEVO!) Componente del Feed de Actividad ---
+// --- Componente del Feed de Actividad ---
 const ActivityFeed = ({ onViewDetails }) => {
+  // ... (Este componente no cambia) ...
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchFeed = async () => {
       try {
@@ -695,12 +813,11 @@ const ActivityFeed = ({ onViewDetails }) => {
       }
     };
     fetchFeed();
-  }, []); // Se ejecuta solo una vez al cargar el componente
+  }, []); 
 
   if (loading) {
     return <div style={{color: 'var(--color-text-secondary)', textAlign: 'center', padding: '2rem'}}>Cargando feed...</div>;
   }
-
   return (
     <div className="activity-feed-container">
       <h2 className="secondary-title" style={{marginBottom: '1rem'}}>Actividad Reciente</h2>
@@ -712,7 +829,6 @@ const ActivityFeed = ({ onViewDetails }) => {
             <div 
               key={activity._id} 
               className="activity-item"
-              // Hacemos que sea clickeable si tiene un gameId
               onClick={() => activity.gameId ? onViewDetails(activity.gameId) : null}
               style={{ cursor: activity.gameId ? 'pointer' : 'default' }}
             >
@@ -742,21 +858,31 @@ const App = () => {
     const [ordenarPor, setOrdenarPor] = useState('fechaCreacion');
     const [reviewUpdateTrigger, setReviewUpdateTrigger] = useState(0);
 
-    // --- LÓGICA DE DATOS Y API ---
+    // --- ¡NUEVO! ESTADO DE AUTENTICACIÓN ---
+    // 'currentUser' guardará { token, user }
+    const [currentUser, setCurrentUser] = useState(null);
 
+    // --- ¡NUEVO! Cargar usuario desde localStorage al iniciar la app
+    useEffect(() => {
+        const storedUser = localStorage.getItem('plusUltraUser');
+        if (storedUser) {
+            setCurrentUser(JSON.parse(storedUser));
+        }
+    }, []); // El array vacío [] significa que esto se ejecuta solo una vez al inicio
+
+    
+    // --- LÓGICA DE DATOS Y API ---
     const fetchJuegos = async () => {
+        // ... (Tu código de fetchJuegos no cambia)
         setLoading(true);
         setError(null);
-        
         const params = new URLSearchParams();
         if (searchTerm) params.append('busqueda', searchTerm);
         if (filterGenero) params.append('genero', filterGenero);
         if (filterPlataforma) params.append('plataforma', filterPlataforma);
         if (filterCompletado) params.append('completado', filterCompletado);
         if (ordenarPor) params.append('ordenarPor', ordenarPor);
-        
         const url = `${API_URL}/juegos?${params.toString()}`;
-
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('Error al cargar la biblioteca');
@@ -770,7 +896,6 @@ const App = () => {
     };
 
     useEffect(() => {
-        // Solo carga los juegos si estamos en la vista de biblioteca
         if (view === 0) {
             fetchJuegos();
         }
@@ -784,12 +909,16 @@ const App = () => {
 
             const response = await fetch(url, {
                 method: method,
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                  'Content-Type': 'application/json',
+                  // --- ¡IMPORTANTE! Envía el token si el usuario está logueado ---
+                  'Authorization': `Bearer ${currentUser?.token}`
+                },
                 body: JSON.stringify(juegoData)
             });
 
             if (!response.ok) {
-              const errData = await response.json(); // Lee el error del backend
+              const errData = await response.json(); 
               throw new Error(errData.error || `Error al ${isEdit ? 'actualizar' : 'agregar'} juego`);
             }
 
@@ -797,65 +926,64 @@ const App = () => {
             if (isEdit && view === 3) {
                 setJuegoSeleccionado(updatedJuego);
             }
-
             setView(0); 
-            // No necesitamos llamar a fetchJuegos() aquí,
-            // porque el useEffect se disparará cuando 'view' cambie a 0
         } catch (err) {
-            setError(err.message); // <-- ¡Aquí es donde aparece tu error!
+            setError(err.message); 
         } finally {
             setLoading(false);
         }
     };
     
     const handleUpdateGame = async (id, updateData) => {
+        // ... (Tu código no cambia, pero sería bueno añadir el token de autorización aquí también)
         setLoading(true);
         try {
             const response = await fetch(`${API_URL}/juegos/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser?.token}` },
                 body: JSON.stringify(updateData)
             });
             if (!response.ok) throw new Error('Error al actualizar estado');
-            
             const updatedJuego = await response.json();
-
             if (juegoSeleccionado && juegoSeleccionado._id === id) {
                 setJuegoSeleccionado(updatedJuego);
             }
-            fetchJuegos(); // Llama aquí para refrescar la lista
-            
+            fetchJuegos(); 
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
-    };
-    
-    const handleToggleComplete = (juego) => {
-        handleUpdateGame(juego._id, { completado: !juego.completado });
     };
     
     const handleDeleteJuego = async (id) => {
+        // ... (Tu código no cambia, pero sería bueno añadir el token de autorización aquí también)
         if (!window.confirm("¿Estás seguro de que quieres eliminar este juego y todas sus reseñas?")) return;
         setLoading(true);
         try {
-            const response = await fetch(`${API_URL}/juegos/${id}`, { method: 'DELETE' });
+            const response = await fetch(`${API_URL}/juegos/${id}`, { 
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${currentUser?.token}` }
+            });
             if (!response.ok) throw new Error('Error al eliminar juego');
             setView(0);
-            // El useEffect se disparará cuando 'view' cambie a 0
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
+
+    // --- (NUEVO) Alternar estado de "completado" de un juego ---
+    const handleToggleComplete = async (juego) => {
+        if (!juego || !juego._id) return;
+        // Reutilizamos la ruta de actualización existente
+        await handleUpdateGame(juego._id, { completado: !juego.completado });
+    };
     
     const handleViewDetails = (juego) => {
-        // Esta función ahora puede recibir un ID de juego (del feed) o el objeto (de la tarjeta)
+        // ... (Tu código no cambia)
         let juegoASeleccionar = juego;
-
-        // Si solo nos pasan un ID...
         if (typeof juego === 'string' || juego instanceof String) {
           juegoASeleccionar = juegos.find(j => j._id === juego);
           if (!juegoASeleccionar) {
@@ -863,28 +991,69 @@ const App = () => {
             return;
           }
         }
-        
         setJuegoSeleccionado(juegoASeleccionar);
         setView(3);
     };
 
     const handleEditGame = (juego) => {
+        // ... (Tu código no cambia)
         setJuegoSeleccionado(juego);
         setView(2);
     };
 
+
+    // --- ¡NUEVO! Funciones de Autenticación ---
+    const handleLoginOrRegister = (authData) => {
+        // authData es el objeto { token, user } que envía el backend
+        localStorage.setItem('plusUltraUser', JSON.stringify(authData));
+        setCurrentUser(authData);
+        setView(0); // Envía al usuario a la Home
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('plusUltraUser');
+        setCurrentUser(null);
+        setView(5); // Envía al usuario a la página de Login
+    };
+
+    // Actualizar imagen de perfil del usuario
+    const handleUpdateProfilePic = async (newUrl) => {
+        if (!currentUser) return;
+        try {
+            const response = await fetch(`${API_URL}/auth/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentUser.token}`
+                },
+                body: JSON.stringify({ profilePicUrl: newUrl })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Error al actualizar perfil');
+            const updated = {
+                ...currentUser,
+                user: {
+                    ...currentUser.user,
+                    profilePicUrl: data.user.profilePicUrl,
+                    nickname: data.user.nickname,
+                }
+            };
+            setCurrentUser(updated);
+            localStorage.setItem('plusUltraUser', JSON.stringify(updated));
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+
     // --- Componente Vista Principal (BibliotecaJuegos) ---
     const BibliotecaJuegos = () => {
+        // ... (Tu código no cambia)
         const generos = ["Acción", "Aventura", "RPG", "Estrategia", "Simulación", "Deportes"];
         const plataformas = ["PC", "PlayStation", "Xbox", "Nintendo Switch", "Móvil"];
-
         return (
             <div className="app-container">
-                
-                {/* --- ¡AÑADIDO! El Feed de Actividad --- */}
                 <ActivityFeed onViewDetails={handleViewDetails} />
-
-                {/* Área de Filtros y Búsqueda */}
                 <div className="form-card shadow-lg" style={{ marginTop: '2rem', marginBottom: '1.5rem', padding: '1rem' }}>
                     <input
                         type="text"
@@ -931,12 +1100,8 @@ const App = () => {
                         </select>
                     </div>
                 </div>
-
-                {/* Mostrar Estado */}
                 {loading && <div style={{ fontSize: '1.25rem', color: 'var(--color-blue-text)', textAlign: 'center', padding: '2.5rem 0' }}>Cargando biblioteca...</div>}
                 {error && <div style={{ fontSize: '1.25rem', color: 'var(--color-red-text)', textAlign: 'center', padding: '2.5rem 0' }}>¡Error de conexión! {error}</div>}
-                
-                {/* Lista de Juegos */}
                 {!loading && !error && (
                     juegos.length > 0 ? (
                         <div className="game-grid">
@@ -960,7 +1125,7 @@ const App = () => {
         );
     };
     
-    // --- Renderizado principal (Router simple) ---
+    // --- (¡MODIFICADO!) Renderizado principal (Router simple) ---
     const renderContent = () => {
         switch (view) {
             case 1:
@@ -976,23 +1141,22 @@ const App = () => {
                             onUpdateReviews={() => setReviewUpdateTrigger(prev => prev + 1)}
                         />;
             case 4:
-                return <EstadisticasPersonales juegos={juegos} onBack={() => setView(0)} />;
+                return <EstadisticasPersonales onBack={() => setView(0)} />;
             case 5:
               return (
                 <div className="login-container">
                   <FormularioLogin 
-                    onLogin={() => setView(0)} 
-                    onGoToRegister={() => setView(6)} // ¡MODIFICADO!
+                    onAuthSuccess={handleLoginOrRegister} // ¡MODIFICADO!
+                    onGoToRegister={() => setView(6)}
                   />
                 </div>
               );
-            // --- ¡AÑADIDO! Case para el Registro ---
             case 6:
               return (
                 <div className="login-container">
                   <FormularioRegistro
-                    onRegister={() => setView(0)} // Al registrarse, vuelve a la home
-                    onGoToLogin={() => setView(5)} // Te lleva de vuelta al login
+                    onAuthSuccess={handleLoginOrRegister} // ¡MODIFICADO!
+                    onGoToLogin={() => setView(5)}
                   />
                 </div>
               );
@@ -1004,7 +1168,15 @@ const App = () => {
 
     return (
         <div className="min-h-screen font-sans" style={{ background: 'var(--color-bg-main)', color: 'var(--color-text-primary)' }}>
-            <Navbar onNavigate={setView} />
+            
+            {/* --- ¡MODIFICADO! Pasamos los props al Navbar --- */}
+            <Navbar 
+                onNavigate={setView} 
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                onUpdateProfilePic={handleUpdateProfilePic}
+            />
+            
             {renderContent()}
         </div>
     );

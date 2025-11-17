@@ -102,3 +102,109 @@
     font-size: 1.5rem;
   }
 }
+/* ------------------------------------------- */
+/* (¡NUEVO!) Estilos para el Perfil en Navbar */
+/* ------------------------------------------- */
+
+.navbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0.5rem !important; /* !important para anular el padding anterior */
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.navbar-profile:hover {
+  background-color: var(--color-bg-input);
+  text-decoration: none;
+}
+
+.navbar-profile img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%; /* Hace la imagen redonda */
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+
+.navbar-profile span {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Botón de Cerrar Sesión */
+.navbar-logout-button {
+  color: var(--color-red-text) !important; /* Rojo sutil */
+}
+.navbar-logout-button:hover {
+  background-color: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+}
+
+/* En móvil, ordena el perfil al final */
+@media (max-width: 768px) {
+  .navbar-profile {
+    /* Invierte el orden para que la imagen quede después del nombre */
+    flex-direction: row-reverse; 
+  }
+}
+.navbar-profile-container {
+  position: relative;
+}
+
+.navbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-profile img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  width: 260px;
+  padding: 0.75rem;
+  z-index: 1000;
+}
+
+.profile-menu-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-menu .input-field {
+  flex: 1;
+}
+
+.profile-menu .btn {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-menu .btn-save {
+  background: var(--color-blue-bg);
+  color: var(--color-blue-text);
+}
+
+.profile-menu .btn-logout {
+  background: var(--color-red-bg);
+  color: var(--color-red-text);
+  width: 100%;
+}

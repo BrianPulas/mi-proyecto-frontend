@@ -340,3 +340,12 @@ a:hover {
   color: var(--color-text-primary);
   font-size: 0.9rem;
 }
+/* ------------------------------------------- */
+/* (¡NUEVO!) Estilos para el Dashboard */
+/* ------------------------------------------- */
+
+/* Arregla el tamaño de los gráficos de Pie */
+.stats-card canvas {
+  max-height: 300px;
+  max-width: 100%;
+}
