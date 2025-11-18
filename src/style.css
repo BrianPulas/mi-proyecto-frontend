@@ -11,7 +11,7 @@
   --color-border: #333333;       /* Borde suave */
   --color-shadow: rgba(0, 0, 0, 0.2);
   
-  /* Colores de Tags (Pastel) - Estos se ven bien en dark mode */
+  /* Colores de Tags (Pastel) */
   --color-green-bg: #e0f8e3;
   --color-green-text: #0c6b58;
   --color-yellow-bg: #fff3db;
@@ -21,12 +21,15 @@
   --color-red-bg: #ffe2e0;
   --color-red-text: #8c2e28;
 
-  /* Colores para el gradiente de fondo de la tarjeta (ajustados para el nuevo estilo) */
+  /* --- (¡MODIFICADO!) Colores Neón más suaves para el borde --- */
+  --primary-neon: #a872f7; /* Morado suave */
+  --secondary-neon: #72f7e0; /* Turquesa suave */
+  --accent-neon: #f772e0; /* Rosa suave */
+
+  /* --- (¡NUEVO!) Colores para el gradiente de la tarjeta de Login --- */
   --card-gradient-start: rgba(30, 30, 30, 0.7); /* Gris oscuro translúcido */
   --card-gradient-end: rgba(18, 18, 18, 0.7);   /* Negro translúcido */
-  
-  /* Color del borde para este estilo */
-  --card-border-color: rgba(255, 255, 255, 0.08); /* Borde blanco muy sutil y translúcido */
+  --card-border-color: rgba(255, 255, 255, 0.08); /* Borde blanco muy sutil */
 }
 
 body {
@@ -78,29 +81,25 @@ a:hover {
 .button {
   font-family: inherit;
   padding: 10px 16px;
-  border: 2px solid transparent; /* Borde invisible por defecto */
+  border: 2px solid transparent; 
   text-transform: none;
   cursor: pointer;
   border-radius: 6px;
   font-weight: 500;
-  
-  /* Transición suave para el color y el fondo */
   transition: all 0.2s ease-in-out; 
-  
-  /* Por defecto, son transparentes */
   background-color: transparent; 
-  box-shadow: none; /* Quitamos la sombra */
+  box-shadow: none;
 }
 .button:active {
   transform: scale(0.98);
   box-shadow: none;
 }
 .button-blue {
-  border-color: #0d6efd; /* Borde azul */
+  border-color: #0d6efd;
   color: #0d6efd;
 }
 .button-blue:hover {
-  background-color: #0d6efd; /* Relleno azul al hacer hover */
+  background-color: #0d6efd;
   color: white;
 }
 .button-green {
@@ -150,15 +149,13 @@ a:hover {
 .textarea-field {
   padding: 0.75rem;
   background-color: var(--color-bg-input);
-  color: var(--color-text-primary); /* Texto claro */
+  color: var(--color-text-primary); 
   border-radius: 6px;
   border: 1px solid var(--color-border);
   width: 100%;
   box-sizing: border-box;
   font-family: inherit;
   font-size: 0.9rem;
-  
-  /* --- (¡AÑADIDO!) Transición suave --- */
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .input-field:focus,
@@ -195,7 +192,6 @@ a:hover {
 .game-card:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-4px);
-  /* --- (¡MODIFICADO!) Borde azul en hover --- */
   border-color: var(--color-blue-text);
 }
 
@@ -205,10 +201,62 @@ a:hover {
   object-fit: cover;
   border-radius: 12px 12px 0 0; 
   margin-bottom: 0;
-  border-bottom: 1px solid var(--color-border); /* Separador */
+  border-bottom: 1px solid var(--color-border); 
 }
 
-/* Estilo de Tags/Pills (Se ven bien en dark mode) */
+/* --- (¡NUEVO!) Estilos para Stats en Tarjeta --- */
+.game-card-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-top: 1rem;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  flex-basis: 0;
+  flex-grow: 1;
+}
+.stat-item span {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+.stat-item strong {
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}
+.game-card-achievements {
+  margin-top: 1rem;
+}
+.game-card-achievements span {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--color-blue-text);
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+/* --- Fin de Estilos de Stats --- */
+
+
+/* Estilo de Tags/Pills */
 .game-status {
   font-family: inherit;
   padding: 0.25rem 0.75rem;
@@ -244,7 +292,6 @@ a:hover {
   gap: 1.5rem;
   max-width: 900px;
   margin: 0 auto;
-  /* Reseteamos estilos anteriores */
   background-color: transparent;
   padding: 0;
   border-radius: 0;
@@ -283,7 +330,7 @@ a:hover {
   box-shadow: 0 4px 12px var(--color-shadow);
   transform: translateX(-280px);
   transition: transform 0.25s ease-in-out;
-  overflow: visible; /* permite ver el handle fuera del panel */
+  overflow: visible; 
 }
 .activity-feed-tab:hover .activity-feed-content {
   transform: translateX(0);
@@ -328,83 +375,6 @@ a:hover {
 .activity-feed-tab:hover .activity-list {
   opacity: 1;
   pointer-events: auto;
-}
-
-/* --- (Nuevo) Resumen compacto dentro del feed de actividad --- */
-.activity-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-}
-.activity-summary-item {
-  background: var(--card-gradient-start);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.summary-label {
-  color: var(--color-text-secondary);
-  font-size: 0.75rem;
-}
-.summary-value {
-  color: var(--color-text-primary);
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-/* --- (Nuevo) Sección de amigos dentro del feed --- */
-.friends-section {
-  padding: 0.25rem 0.75rem 0.5rem;
-}
-.friends-header {
-  color: var(--color-text-primary);
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
-}
-.friends-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.friend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.5rem;
-  border-radius: 8px;
-}
-.friend-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-.friend-item img {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--color-border);
-}
-.friend-info {
-  display: flex;
-  flex-direction: column;
-}
-.friend-name {
-  color: var(--color-text-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-.friend-status {
-  color: var(--color-text-secondary);
-  font-size: 0.75rem;
-}
-.friends-empty {
-  color: var(--color-text-secondary);
-  font-style: italic;
-  padding: 0.25rem 0.5rem;
 }
 .activity-item {
   display: flex;
@@ -480,47 +450,43 @@ a:hover {
   background-position: center;
   background-repeat: no-repeat;
   
-  /* --- ¡AÑADIDO! Animación "Ken Burns" (la mantenemos) --- */
+  /* --- ¡AÑADIDO! Animación "Ken Burns" --- */
   animation: ken-burns-pan 20s infinite alternate ease-in-out;
   overflow: hidden; 
 }
 
-/* --- (¡NUEVO ESTILO!) Clase para formulario de Login sutil y translúcido --- */
+/* --- (¡REEMPLAZADO!) Clase para el formulario de Login sutil --- */
 .form-card-translucent {
-  /* No necesitamos position: relative ni overflow: hidden si no hay pseudo-elemento */
-  /* El background será un gradiente translúcido */
+  /* Fondo de gradiente sutil y translúcido */
   background: linear-gradient(
     135deg, 
     var(--card-gradient-start), 
     var(--card-gradient-end)
   );
   
-  /* El efecto de "vidrio esmerilado" lo mantenemos */
-  backdrop-filter: blur(8px); /* Ligeramente menos blur para un look más limpio */
-  -webkit-backdrop-filter: blur(8px); /* Para Safari */
+  /* Efecto de "vidrio esmerilado" */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   
   /* Borde sutil */
-  border: 1px solid var(--card-border-color); /* Usamos la nueva variable */
-  border-radius: 14px; /* Un poco más redondeado */
+  border: 1px solid var(--card-border-color);
   
-  /* Sombra más suave */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra más extendida y suave */
+  /* Sombra suave */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 
-  padding: 1.5rem; /* Asegura el padding interno de la tarjeta */
-  max-width: 400px; /* Un ancho máximo más común para formularios de login */
-  margin: 0 auto; /* Centrarlo */
-  position: relative; /* Por si acaso se añade contenido absoluto luego */
+  /* Aseguramos que anule el 'border-radius' de 'form-card' si es necesario */
+  border-radius: 14px; 
+  padding: 1.5rem; /* Asegura el padding */
+  max-width: 400px; /* Ancho específico para login */
+  margin: 0 auto;  /* Centrado */
 }
 
-/* --- (¡ELIMINADO!) Ya no necesitamos el pseudo-elemento ::before para este estilo --- */
-/* Eliminar este bloque:
-.form-card-translucent::before { ... }
-*/
+/* --- (¡ELIMINADO!) El pseudo-elemento ::before ya no es necesario --- */
+
 
 /* ------------------------------------------- */
-/* (¡NUEVO!) Estilos para el Buscador (RAWG) */
+/* Estilos para el Buscador (RAWG) */
 /* ------------------------------------------- */
-
 .search-results-container {
   position: absolute;
   top: 100%; 
@@ -534,13 +500,11 @@ a:hover {
   overflow-y: auto;
   z-index: 100;
 }
-
 .search-loading {
   padding: 0.75rem;
   color: var(--color-text-secondary);
   font-style: italic;
 }
-
 .search-result-item {
   display: flex;
   align-items: center;
@@ -549,24 +513,21 @@ a:hover {
   cursor: pointer;
   transition: background-color 0.2s;
 }
-
 .search-result-item:hover {
   background-color: var(--color-bg-card);
 }
-
 .search-result-item img {
   width: 60px;
   height: 40px;
   object-fit: cover;
   border-radius: 4px;
 }
-
 .search-result-item span {
   color: var(--color-text-primary);
   font-size: 0.9rem;
 }
 /* ------------------------------------------- */
-/* (¡NUEVO!) Estilos para el Dashboard */
+/* Estilos para el Dashboard */
 /* ------------------------------------------- */
 
 .stats-card canvas {
@@ -574,7 +535,7 @@ a:hover {
   max-width: 100%;
 }
 
-/* --- (¡MODIFICADO!) Animación "Ken Burns" --- */
+/* --- Animación "Ken Burns" --- */
 @keyframes ken-burns-pan {
   0% {
     background-position: center center;
@@ -586,10 +547,9 @@ a:hover {
   }
 }
 
-/* --- (¡ELIMINADO!) Ya no necesitamos la animación del borde para este estilo --- */
-/* Eliminar este bloque:
-@keyframes animated-border-shimmer { ... }
-*/
+/* --- (¡ELIMINADO!) La animación del borde ya no se usa --- */
+/* @keyframes animated-border-shimmer { ... } */
+
 
 /* --- Overrides para tema claro --- */
 body.light {
@@ -600,8 +560,38 @@ body.light {
   --color-text-secondary: #666666;
   --color-border: #dddddd;
   --color-shadow: rgba(0, 0, 0, 0.08);
-  /* Ajustes para el tema claro del card-gradient */
+
+  /* --- (¡AÑADIDO!) Ajustes para el tema claro del card-gradient --- */
   --card-gradient-start: rgba(255, 255, 255, 0.7);
   --card-gradient-end: rgba(240, 240, 240, 0.7);
   --card-border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ------------------------------------------- */
+/* (¡MODIFICADO!) Fondo de Patrón para la Home */
+/* ------------------------------------------- */
+.home-background {
+  /* Fondo de color base por si la imagen tarda en cargar */
+  background-color: var(--color-bg-main);
+  
+  /* Carga la imagen desde la carpeta /public */
+  background-image: url('/fondo-gamer-infinito.png'); /* <-- ¡CAMBIO REALIZADO! */
+  
+  /* ¡LA CLAVE! Repite la imagen como un patrón */
+  background-repeat: repeat; 
+  background-size: auto; /* Usa el tamaño original de la imagen */
+  
+  /* Animación de paneo sutil */
+  animation: animated-background-pan 120s infinite linear;
+}
+
+/* --- (¡MODIFICADO!) Animación para el Paneo del Fondo --- */
+@keyframes animated-background-pan {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    /* Mueve el fondo lentamente */
+    background-position: 1000px 1000px;
+  }
 }
