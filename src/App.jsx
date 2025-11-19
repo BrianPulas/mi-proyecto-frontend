@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Navbar.css';
 // Gráficos de pastel (Pie) para estadísticas
 import { Pie } from 'react-chartjs-2';
-// --- ¡MODIFICADO! Añadimos los elementos para Gráficos de Barras (aunque Pie es el principal) ---
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
@@ -21,17 +20,18 @@ const StarRating = ({ puntuacion }) => (
 );
 
 // --- Componente Utilidad: Botón ---
-const Button = ({ children, onClick, color = 'blue', type = 'button' }) => (
+const Button = ({ children, onClick, color = 'blue', type = 'button', style }) => (
     <button
         onClick={onClick}
         type={type}
         className={`button ${color === 'blue' ? 'button-blue' : color === 'red' ? 'button-red' : 'button-green'}`}
+        style={style}
     >
         {children}
     </button>
 );
 
-// --- (¡NUEVO!) Componente Utilidad: Barra de Progreso ---
+// --- Componente Utilidad: Barra de Progreso ---
 const ProgressBar = ({ value, max }) => {
     const percentage = max > 0 ? (value / max) * 100 : 0;
     return (
@@ -46,7 +46,6 @@ const ProgressBar = ({ value, max }) => {
 
 // --- FormularioLogin ---
 function FormularioLogin({ onAuthSuccess, onGoToRegister }) {
-  // ... (Sin cambios)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); 
@@ -93,7 +92,6 @@ function FormularioLogin({ onAuthSuccess, onGoToRegister }) {
 
 // --- FormularioRegistro ---
 function FormularioRegistro({ onAuthSuccess, onGoToLogin }) {
-  // ... (Sin cambios)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -147,7 +145,6 @@ function FormularioRegistro({ onAuthSuccess, onGoToLogin }) {
 
 // --- Componente Navbar ---
 const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdateNickname, onUploadProfilePhoto }) => {
-  // ... (Sin cambios)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [friendQuery, setFriendQuery] = useState('');
@@ -261,61 +258,67 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdat
 };
 
 
-// --- (¡MODIFICADO!) Componente TarjetaJuego ---
+// --- (¡REEMPLAZADO!) Componente TarjetaJuego (Diseño Artístico) ---
 const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
-    <div className="game-card shadow-lg">
-        <img
-            src={juego.imagenPortada}
-            alt={`Portada de ${juego.titulo}`}
-            className="game-card-img"
-            onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e293b/cbd5e1?text=PLUS+ULTRA+GAME"; }}
-        />
-        <div style={{ padding: '1rem' }}>
-            <h3 className="text-xl font-bold text-blue-400 truncate mb-1" style={{ color: 'var(--color-text-primary)' }}>{juego.titulo}</h3>
+    <div 
+        className="game-card"
+        // La imagen es ahora el fondo de la tarjeta
+        style={{ backgroundImage: `url(${juego.imagenPortada})` }}
+    >
+        {/* Contenedor oscuro que aparece al hacer hover */}
+        <div className="game-card-content">
             
-            {/* --- ¡NUEVO! Sección de Stats --- */}
-            <div className="game-card-stats">
-                <div className="stat-item">
-                    <span>Horas Jugadas</span>
-                    <strong>{juego.totalHorasJugadas || 0}</strong>
+            <h3 className="game-card-title">{juego.titulo}</h3>
+            
+            <p className="game-card-info">
+                {juego.genero} • {juego.añoLanzamiento}
+            </p>
+
+            {/* Estadísticas compactas estilo Steam */}
+            <div className="game-card-stats-row">
+                <div className="stat-mini">
+                    <span>Horas</span>
+                    <strong>{juego.totalHorasJugadas || 0}h</strong>
                 </div>
                 <div className="stat-item">
-                    <span>Puntuación</span>
-                    {/* --- MODIFICADO: Añade toFixed(1) para consistencia --- */}
-                    <strong>{juego.puntuacionMedia ? `${juego.puntuacionMedia.toFixed(1)} ★` : 'N/A'}</strong>
+                    <span style={{fontSize:'0.7rem', color:'#ccc'}}>NOTA</span>
+                    <strong style={{color:'gold'}}>{juego.puntuacionMedia ? juego.puntuacionMedia.toFixed(1) : '-'}</strong>
                 </div>
             </div>
-            {/* Si hay logros, muestra la barra */}
+
+            {/* Barra de Logros (si existen) */}
             {(juego.logrosTotales > 0) && (
-                <div className="game-card-achievements">
-                    <span>Logros: {juego.logrosObtenidos} / {juego.logrosTotales}</span>
-                    <ProgressBar value={juego.logrosObtenidos} max={juego.logrosTotales} />
+                <div style={{ marginBottom: '1rem' }}>
+                    <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.7rem', color:'#ccc', marginBottom:'2px'}}>
+                        <span>Logros</span>
+                        <span>{juego.logrosObtenidos}/{juego.logrosTotales}</span>
+                    </div>
+                    <div className="progress-container-card">
+                        <div 
+                            className="progress-fill-card" 
+                            style={{ width: `${(juego.logrosObtenidos / juego.logrosTotales) * 100}%` }}
+                        ></div>
+                    </div>
                 </div>
             )}
-            {/* --- Fin de Stats --- */}
 
-            <p className="text-sm text-gray-400 mb-2" style={{ color: 'var(--color-text-secondary)', opacity: 0.9, marginTop: '1rem' }}>
-                {juego.genero} • {juego.plataforma} ({juego.añoLanzamiento})
-            </p>
-            <div className={`game-status ${juego.completado ? 'game-status-completed' : 'game-status-pending'}`}>
-                {juego.completado ? 'COMPLETADO' : 'PENDIENTE'}
-            </div>
-            <div className="card-button-group">
-                <Button onClick={() => onViewDetails(juego)} color="blue">
-                    Ver Detalles / Reseñas
+            {/* Botones de Acción */}
+            <div className="card-button-group" style={{ flexDirection: 'row', marginTop: 'auto' }}>
+                <Button onClick={() => onViewDetails(juego)} color="blue" style={{ flex: 1, fontSize: '0.8rem', padding:'6px' }}>
+                    Ver
                 </Button>
-                <Button onClick={() => onToggleComplete(juego)} color={juego.completado ? 'red' : 'green'}>
-                    {juego.completado ? 'Marcar como Pendiente' : 'Marcar como Completado'}
+                <Button onClick={() => onToggleComplete(juego)} color={juego.completado ? 'red' : 'green'} style={{ flex: 1, fontSize: '0.8rem', padding:'6px' }}>
+                    {juego.completado ? '↩' : '✔'}
                 </Button>
-                <Button onClick={() => onEdit(juego)} color="blue">
-                    Editar
+                <Button onClick={() => onEdit(juego)} color="blue" style={{ flex: 0.5, fontSize: '0.8rem', padding:'6px' }}>
+                    ✏️
                 </Button>
             </div>
         </div>
     </div>
 );
 
-// --- (¡MODIFICADO!) Componente FormularioJuego ---
+// --- Componente FormularioJuego ---
 const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
     const isEdit = !!juegoInicial._id;
     const [juego, setJuego] = useState({
@@ -691,7 +694,6 @@ const EstadisticasPersonales = ({ onBack }) => {
     }, []);
 
     const getPieChartData = (dataArray) => {
-        if (!dataArray || dataArray.length === 0) return { labels: [], datasets: [] }; // Evita error si está vacío
         const labels = dataArray.map(item => item._id); 
         const data = dataArray.map(item => item.count); 
         return {
@@ -723,6 +725,7 @@ const EstadisticasPersonales = ({ onBack }) => {
     }
 
     const porcentajeCompletado = stats.totalJuegos > 0 ? ((stats.completados / stats.totalJuegos) * 100).toFixed(0) : 0;
+    // --- ¡NUEVO! Cálculo de porcentaje de logros ---
     const porcentajeLogros = stats.totalLogrosPosibles > 0 ? ((stats.totalLogrosObtenidos / stats.totalLogrosPosibles) * 100).toFixed(0) : 0;
     
     const plataformaChartData = getPieChartData(stats.plataformas);
@@ -733,6 +736,7 @@ const EstadisticasPersonales = ({ onBack }) => {
             <Button onClick={onBack} color="blue" style={{ marginBottom: '1.5rem' }}>← Volver a la Biblioteca</Button>
             <h2 className="header-title" style={{ marginBottom: '2rem' }}>Dashboard Personal</h2>
 
+            {/* Tarjetas de Estadísticas Principales */}
             <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                 <div className="stats-card">
                     <p style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--color-text-primary)' }}>{stats.totalJuegos}</p>
@@ -754,6 +758,7 @@ const EstadisticasPersonales = ({ onBack }) => {
                 </div>
             </div>
 
+            {/* --- ¡NUEVO! Barras de Progreso Globales --- */}
             <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr', marginTop: '2rem' }}>
                 <div className="stats-card">
                     <h3 className="secondary-title" style={{marginBottom: '1rem'}}>Tasa de Finalización</h3>
@@ -767,27 +772,26 @@ const EstadisticasPersonales = ({ onBack }) => {
                 </div>
             </div>
 
+
+            {/* Fila de Gráficos */}
             <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', marginTop: '2rem' }}>
+                
+                {/* Gráfico de Plataformas */}
                 <div className="stats-card" style={{ padding: '2rem' }}>
                     <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Plataforma</h3>
-                    {stats.plataformas.length > 0 ? (
-                        <div style={{ maxHeight: '300px', display: 'flex', justifyContent: 'center' }}>
-                            <Pie data={plataformaChartData} options={chartOptions} />
-                        </div>
-                    ) : (
-                        <p style={{color: 'var(--color-text-secondary)'}}>Añade juegos para ver este gráfico.</p>
-                    )}
+                    <div style={{ maxHeight: '300px', display: 'flex', justifyContent: 'center' }}>
+                        <Pie data={plataformaChartData} options={chartOptions} />
+                    </div>
                 </div>
+
+                {/* Gráfico de Géneros */}
                 <div className="stats-card" style={{ padding: '2rem' }}>
                     <h3 className="secondary-title" style={{ marginBottom: '1rem' }}>Juegos por Género</h3>
-                    {stats.generos.length > 0 ? (
-                        <div style={{ maxHeight: '300px', display: 'flex', justifyContent: 'center' }}>
-                            <Pie data={generoChartData} options={chartOptions} />
-                        </div>
-                    ) : (
-                         <p style={{color: 'var(--color-text-secondary)'}}>Añade juegos para ver este gráfico.</p>
-                    )}
+                    <div style={{ maxHeight: '300px', display: 'flex', justifyContent: 'center' }}>
+                         <Pie data={generoChartData} options={chartOptions} />
+                    </div>
                 </div>
+
             </div>
 
             {/* --- ¡NUEVO! Feed de Actividad en el Dashboard --- */}
@@ -863,7 +867,7 @@ const ActivityFeed = ({ onViewDetails, juegos = [], friends = [] }) => {
                   <img src={f.profilePicUrl || '/vite.svg'} alt={f.nickname || 'usuario'} />
                   <div className="friend-info">
                     <div className="friend-name">{f.nickname || f.email}</div>
-                    <div className="friend-status">{f.status || 'Sin estado'}</div>
+                    <div className="friend-status">{f.phrase || ''}</div>
                   </div>
                 </div>
               ))}
@@ -1166,6 +1170,7 @@ const App = () => {
                 {error && <div style={{ fontSize: '1.25rem', color: 'var(--color-red-text)', textAlign: 'center', padding: '2.5rem 0' }}>¡Error de conexión! {error}</div>}
                 {!loading && !error && (
                     juegos.length > 0 ? (
+                        // Usamos la clase .game-grid que definimos en el CSS nuevo
                         <div className="game-grid">
                             {juegos.map(juego => (
                                 <TarjetaJuego
@@ -1186,112 +1191,6 @@ const App = () => {
             </div>
         );
     };
-    
- // --- PerfilView ---
- const PerfilView = () => {
-    // ... (sin cambios)
-    const [nickname, setNickname] = useState(currentUser?.user?.nickname || '');
-    const [phrase, setPhrase] = useState(currentUser?.user?.phrase || '');
-    const [url, setUrl] = useState(currentUser?.user?.profilePicUrl || '');
-    const [file, setFile] = useState(null);
-    const avatarSrc = (currentUser?.user?.profilePicUrl && currentUser.user.profilePicUrl.trim()) ? currentUser.user.profilePicUrl : '/vite.svg';
-    const saveNickname = async (e) => { e.preventDefault(); const nick = (nickname || '').trim(); if (!nick) return; await handleUpdateNickname(nick); };
-    const savePhrase = async (e) => { e.preventDefault(); const text = (phrase || '').trim(); if (!currentUser) return; try {
-      const response = await fetch(`${API_URL}/auth/profile`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` }, body: JSON.stringify({ phrase: text })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Error al actualizar frase');
-      const updated = { ...currentUser, user: { ...currentUser.user, profilePicUrl: data.user.profilePicUrl, nickname: data.user.nickname, phrase: data.user.phrase } };
-      setCurrentUser(updated);
-      localStorage.setItem('plusUltraUser', JSON.stringify(updated));
-    } catch (err) { alert(err.message); }
-    };
-    const saveUrl = async (e) => { e.preventDefault(); const clean = (url || '').trim(); if (!clean) return; await handleUpdateProfilePic(clean); };
-    const uploadFile = async (e) => { e.preventDefault(); if (!file) return; await handleUploadProfilePhoto(file); setFile(null); };
-
-    return (
-      <div className="app-container">
-        <div className="form-card shadow-lg" style={{ maxWidth: '900px' }}>
-          <h2 style={{ marginBottom: '1rem' }}>Tu Perfil</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1.5rem' }}>
-            <div>
-              <img src={avatarSrc} alt="avatar" style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--color-border)' }} />
-              <div style={{ marginTop: '1rem' }}>
-                <form onSubmit={uploadFile} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-                  <button className="button button-blue" type="submit">Subir foto</button>
-                </form>
-                <form onSubmit={saveUrl} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
-                  <input type="text" className="input-field" placeholder="URL de imagen" value={url} onChange={(e) => setUrl(e.target.value)} />
-                  <button className="button button-green" type="submit">Guardar URL</button>
-                </form>
-              </div>
-            </div>
-            <div>
-              <form onSubmit={saveNickname}>
-                <label>Apodo</label>
-                <input className="input-field" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-                <button className="button button-green" type="submit" style={{ marginTop: '0.5rem' }}>Guardar apodo</button>
-              </form>
-              <form onSubmit={savePhrase} style={{ marginTop: '1rem' }}>
-                <label>Frase de perfil</label>
-                <textarea className="textarea-field" rows={3} value={phrase} onChange={(e) => setPhrase(e.target.value)} />
-                <button className="button button-green" type="submit" style={{ marginTop: '0.5rem' }}>Guardar frase</button>
-              </form>
-              <div style={{ marginTop: '1.5rem' }}>
-                <div style={{ color: 'var(--color-text-primary)', fontWeight: 700, marginBottom: '0.5rem' }}>Amigos</div>
-                {friends && friends.length > 0 ? (
-                  <div className="friends-list">
-                    {friends.map((f) => (
-                      <div key={f.id} className="friend-item">
-                        <img src={f.profilePicUrl || '/vite.svg'} alt={f.nickname || 'usuario'} />
-                        <div className="friend-info">
-                          <div className="friend-name">{f.nickname || f.email}</div>
-                          <div className="friend-status">{f.phrase || ''}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="friends-empty">Aún no has agregado amigos.</div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // --- Nueva Vista: Configuración ---
-  const SettingsView = () => {
-    // ... (sin cambios)
-    const [theme, setTheme] = useState(() => localStorage.getItem('plusUltraTheme') || 'dark');
-    useEffect(() => {
-      const body = document.body;
-      if (theme === 'light') {
-        body.classList.add('light');
-      } else {
-        body.classList.remove('light');
-      }
-      localStorage.setItem('plusUltraTheme', theme);
-    }, [theme]);
-    return (
-      <div className="app-container">
-        <div className="form-card shadow-lg" style={{ maxWidth: '700px' }}>
-          <h2>Configuración</h2>
-          <div style={{ marginTop: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem' }}>Tema</label>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button className="button button-blue" onClick={() => setTheme('dark')}>Oscuro</button>
-              <button className="button button-blue" onClick={() => setTheme('light')}>Claro</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
     
     // --- Renderizado principal (Router simple) ---
     const renderContent = () => {
