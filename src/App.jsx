@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Navbar.css';
+import PerfilView from './components/PerfilView'; 
+import SettingsView from './components/SettingsView'; // <--- IMPORT AÑADIDO
 // Gráficos de pastel (Pie) para estadísticas
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
@@ -258,7 +260,7 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUpdateProfilePic, onUpdat
 };
 
 
-// --- (¡REEMPLAZADO!) Componente TarjetaJuego (Diseño Artístico) ---
+// --- Componente TarjetaJuego (Diseño Artístico) ---
 const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
     <div 
         className="game-card"
@@ -1244,15 +1246,23 @@ const App = () => {
                 return (
                   <PerfilView 
                     currentUser={currentUser}
-                    setCurrentUser={setCurrentUser}
+                    // Pasa la información necesaria para que funcione el perfil
                     handleUpdateNickname={handleUpdateNickname}
                     handleUpdateProfilePic={handleUpdateProfilePic}
                     handleUploadProfilePhoto={handleUploadProfilePhoto}
                     friends={friends}
+                    juegos={juegos} // <--- ESTO ES LO QUE FALTABA
                   />
                 );
             case 8:
-                return <SettingsView />;
+                // --- ¡NUEVO! VISTA DE CONFIGURACIÓN ESTILO HUD ---
+                return (
+                    <SettingsView 
+                        currentUser={currentUser}
+                        onBack={() => setView(0)}
+                        handleUpdateNickname={handleUpdateNickname}
+                    />
+                );
         }
     };
 

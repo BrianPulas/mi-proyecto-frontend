@@ -40,12 +40,14 @@
 .read-the-docs {
   color: #888;
 }
+
 /* Asumiendo que tu 'App.jsx' tiene un div con esta clase */
 .app-container {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
 }
+
 /* Overlay desactivado (mantén una única definición) */
 .app-container::before {
   content: none;
@@ -72,4 +74,86 @@
   width: auto;
   height: auto;
   box-sizing: border-box;
+}
+
+/* --- ESTILOS GLOBALES Y HUD FUTURISTA (PLUS ULTRA) --- */
+
+/* Reset básico para evitar bordes blancos */
+body {
+  margin: 0;
+  padding: 0;
+  /* Fondo oscuro neutro por si tarda en cargar tu imagen de fondo */
+  background-color: #0f0f13; 
+  scroll-behavior: smooth;
+}
+
+/* Navbar siempre visible por encima del contenido */
+.navbar {
+  position: relative;
+  z-index: 100;
+}
+
+/* Animación del cursor de la terminal en el Perfil */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* --- BARRA DE DESPLAZAMIENTO PERSONALIZADA (Cyberpunk Style) --- */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #0f0f13;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+  border: 1px solid #222;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d524c9; /* Rosa neón al interactuar */
+  box-shadow: 0 0 10px #d524c9;
+}
+
+/* --- RESPONSIVIDAD DEL DASHBOARD (PerfilView) --- */
+/* Estos estilos fuerzan el cambio de layout en pantallas más pequeñas 
+   para sobreescribir los estilos en línea del componente Grid */
+
+/* Tablet / Laptop pequeña (Menos de 900px) */
+@media (max-width: 900px) {
+  /* Cambiamos de 4 columnas a 2 columnas */
+  div[style*="gridTemplateAreas"] {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-areas:
+      "id id"
+      "stats chart"
+      "hero hero"
+      "friends log" !important;
+  }
+}
+
+/* Móvil (Menos de 600px) */
+@media (max-width: 600px) {
+  /* Cambiamos a una sola columna vertical (pila) */
+  div[style*="gridTemplateAreas"] {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Ajustamos el tamaño del avatar para que no sea gigante en móvil */
+  img[alt="Avatar"] {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  /* Ajustamos texto del título del juego hero */
+  h2[style*="fontSize: '36px'"] {
+    font-size: 24px !important;
+  }
 }
