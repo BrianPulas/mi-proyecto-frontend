@@ -198,6 +198,7 @@ const Navbar = ({ onNavigate, currentUser, onLogout, onUploadProfilePhoto }) => 
   );
 };
 
+
 // --- Componente TarjetaJuego ---
 const TarjetaJuego = ({ juego, onViewDetails, onToggleComplete, onEdit }) => (
     <div className="game-card" style={{ backgroundImage: `url(${juego.imagenPortada})` }}>
@@ -299,7 +300,7 @@ const FormularioJuego = ({ juegoInicial = {}, onSave, onCancel }) => {
     );
 };
 
-// --- Componente DetalleJuego (NUEVO DISEÑO "HERO") ---
+// --- DetalleJuego (NUEVO DISEÑO "HERO") ---
 const DetalleJuego = ({ juego, onBack, onUpdateGame, onDeleteGame, onUpdateReviews }) => {
     const [reseñas, setReseñas] = useState([]);
     const [isAddingReview, setIsAddingReview] = useState(false);
@@ -524,10 +525,14 @@ const App = () => {
     const [error, setError] = useState(null);
     const [juegoSeleccionado, setJuegoSeleccionado] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterGenero, setFilterGenero] = useState('');
+    const [filterPlataforma, setFilterPlataforma] = useState('');
+    const [filterCompletado, setFilterCompletado] = useState('');
+    const [ordenarPor, setOrdenarPor] = useState('fechaCreacion');
+    const [reviewUpdateTrigger, setReviewUpdateTrigger] = useState(0);
+    const [successMessage, setSuccessMessage] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
     const [friends, setFriends] = useState([]);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [reviewUpdateTrigger, setReviewUpdateTrigger] = useState(0);
 
     // Carga inicial
     useEffect(() => { const u = localStorage.getItem('plusUltraUser'); if(u) setCurrentUser(JSON.parse(u)); }, []);
@@ -613,14 +618,71 @@ const App = () => {
             case 0: default: 
                 return (
                     <div className="home-background">
+                        {/* --- BARRA DE BÚSQUEDA INTEGRADA --- */}
+                        <div className="search-toolbar-container">
+                            <div className="search-glass-bar">
+                                {/* Buscador */}
+                                <div className="search-input-group">
+                                    <span className="search-icon">🔍</span>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Buscar juego..." 
+                                        value={searchTerm} 
+                                        onChange={(e) => setSearchTerm(e.target.value)} 
+                                        className="search-input-transparent" 
+                                    />
+                                </div>
+
+                                {/* Separador Vertical */}
+                                <div className="search-divider hidden md:block"></div>
+
+                                {/* Filtros */}
+                                <div className="filters-group">
+                                    <select value={filterGenero} onChange={(e) => setFilterGenero(e.target.value)} className="filter-select">
+                                        <option value="">Género</option>
+                                        {["Acción", "Aventura", "RPG", "Estrategia", "Simulación", "Deportes"].map(g => <option key={g} value={g}>{g}</option>)}
+                                    </select>
+                                    
+                                    <select value={filterPlataforma} onChange={(e) => setFilterPlataforma(e.target.value)} className="filter-select">
+                                        <option value="">Plataforma</option>
+                                        {["PC", "PlayStation", "Xbox", "Nintendo Switch", "Móvil"].map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
+
+                                    <select value={filterCompletado} onChange={(e) => setFilterCompletado(e.target.value)} className="filter-select">
+                                        <option value="">Estado</option>
+                                        <option value="true">Completados</option>
+                                        <option value="false">Pendientes</option>
+                                    </select>
+
+                                    <select value={ordenarPor} onChange={(e) => setOrdenarPor(e.target.value)} className="filter-select">
+                                        <option value="fechaCreacion">Más Recientes</option>
+                                        <option value="titulo">Nombre (A-Z)</option>
+                                        <option value="añoLanzamiento">Año</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* --- CONTENIDO DE LA BIBLIOTECA --- */}
                         <div className="app-container">
                             {successMessage && <div className="success-banner" style={{marginBottom:'1rem', padding:'1rem', background:'var(--color-green-bg)', color:'var(--color-green-text)', textAlign:'center', borderRadius:'8px'}}>{successMessage}</div>}
-                            <div className="form-card shadow-lg" style={{ marginTop: '2rem', padding: '1rem' }}>
-                                <input value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} placeholder="Buscar..." className="input-field" />
-                            </div>
-                            <div className="game-grid">
-                                {juegos.map(j => <TarjetaJuego key={j._id} juego={j} onViewDetails={handleViewDetails} onToggleComplete={(game) => handleUpdateGame(game._id, { completado: !game.completado })} onEdit={handleEditGame} />)}
-                            </div>
+                            
+                            {loading && <div style={{ fontSize: '1.25rem', color: 'var(--color-blue-text)', textAlign: 'center', padding: '2.5rem 0' }}>Cargando biblioteca...</div>}
+                            {error && <div style={{ fontSize: '1.25rem', color: 'var(--color-red-text)', textAlign: 'center', padding: '2.5rem 0' }}>¡Error de conexión! {error}</div>}
+                            
+                            {!loading && !error && (
+                                juegos.length > 0 ? (
+                                    <div className="game-grid">
+                                        {juegos.map(juego => (
+                                            <TarjetaJuego key={juego._id} juego={juego} onViewDetails={handleViewDetails} onToggleComplete={(game) => handleUpdateGame(game._id, { completado: !game.completado })} onEdit={handleEditGame} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="form-card shadow-lg" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
+                                        <p style={{ fontSize: '1.5rem', color: 'var(--color-text-secondary)', opacity: 0.7 }}>Tu biblioteca está vacía o no coincide con los filtros. ¡Añade tu primer juego!</p>
+                                    </div>
+                                )
+                            )}
                         </div>
                     </div>
                 );
