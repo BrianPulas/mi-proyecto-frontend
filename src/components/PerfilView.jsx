@@ -6,42 +6,66 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // --- CONFIGURACIÓN DEL SISTEMA ---
-const DEFAULT_AVATAR = "https://i.imgur.com/6v8d9nS.png"; // Avatar Cyberpunk por defecto
+const DEFAULT_AVATAR = "https://i.imgur.com/6v8d9nS.png"; 
 const XP_PER_GAME = 50;
 const XP_PER_COMPLETE = 150;
 const XP_PER_HOUR = 10;
+const BACKEND_URL = "http://localhost:3000"; 
 
 const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfilePhoto }) => {
   
   const fileInputRef = useRef(null);
-  // Estado local para la previsualización inmediata de la foto
   const [localPreview, setLocalPreview] = useState(null);
 
-  // Sincronizar el preview si el usuario cambia desde fuera (opcional)
   useEffect(() => {
     if (currentUser?.user?.profilePicUrl) {
-      setLocalPreview(null); // Limpiamos preview si viene una nueva URL real del servidor
+      setLocalPreview(null); 
     }
   }, [currentUser]);
+
+  // --- FUNCIÓN CORREGIDA (VERSIÓN FINAL) ---
+  const getImageUrl = (path) => {
+    if (!path) return DEFAULT_AVATAR;
+    
+    // 1. Si ya es una URL completa (internet o blob), devolverla
+    if (path.startsWith('blob:') || path.startsWith('http')) {
+        return path;
+    }
+
+    // 2. Limpiar barras invertidas de Windows (\ -> /)
+    let cleanPath = path.replace(/\\/g, '/');
+
+    // 3. --- CORRECCIÓN CLAVE ---
+    // Si la ruta empieza con '/', se lo quitamos para normalizar
+    // Ejemplo: "/uploads/foto.jpg" se convierte en "uploads/foto.jpg"
+    if (cleanPath.startsWith('/')) {
+        cleanPath = cleanPath.substring(1);
+    }
+
+    // 4. Asegurar que tenga el prefijo 'uploads/' si no lo tiene
+    // Ahora que quitamos la barra inicial, esta comprobación funcionará bien
+    if (!cleanPath.startsWith('uploads/')) {
+        cleanPath = `uploads/${cleanPath}`;
+    }
+
+    // 5. Construir URL final
+    // Resultado esperado: http://localhost:3000/uploads/avatars/foto.jpg
+    return `${BACKEND_URL}/${cleanPath}`;
+  };
 
   if (!currentUser || !currentUser.user) return <div style={{color:'white', textAlign:'center', marginTop:'50px'}}>Cargando sistema...</div>;
   const user = currentUser.user;
 
-  // --- 1. SISTEMA DE NIVELES ---
+  // --- CÁLCULOS DE NIVEL ---
   const totalJuegos = juegos.length;
   const completados = juegos.filter(j => j.completado).length;
   const totalHoras = juegos.reduce((acc, curr) => acc + (curr.totalHorasJugadas || 0), 0);
-
   const currentXP = (totalJuegos * XP_PER_GAME) + (completados * XP_PER_COMPLETE) + (totalHoras * XP_PER_HOUR);
   const nivelActual = Math.floor(Math.sqrt(currentXP / 100)) || 1;
-  
   const xpNextLevel = Math.pow(nivelActual + 1, 2) * 100;
   const xpPrevLevel = Math.pow(nivelActual, 2) * 100;
-  const xpProgress = currentXP - xpPrevLevel;
-  const xpNeeded = xpNextLevel - xpPrevLevel;
-  const xpPercentage = Math.min(100, Math.max(0, (xpProgress / xpNeeded) * 100));
+  const xpPercentage = Math.min(100, Math.max(0, ((currentXP - xpPrevLevel) / (xpNextLevel - xpPrevLevel)) * 100));
 
-  // --- 2. GRÁFICO DONUT ---
   const completionRate = totalJuegos > 0 ? Math.round((completados / totalJuegos) * 100) : 0;
   const chartData = {
     labels: ['Completado', 'Pendiente'],
@@ -54,7 +78,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
   };
   const chartOptions = { plugins: { legend: { display: false }, tooltip: { enabled: false } } };
 
-  // --- 3. MANEJO DE FOTO ---
+  // --- EVENTOS DE FOTO ---
   const onAvatarClick = () => {
     fileInputRef.current.click();
   };
@@ -62,31 +86,27 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
   const onFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // 1. Crear URL temporal para mostrarla YA (Feedback instantáneo)
       const previewUrl = URL.createObjectURL(file);
       setLocalPreview(previewUrl);
-
-      // 2. Subir al servidor
       if (handleUploadProfilePhoto) {
         handleUploadProfilePhoto(file);
       }
     }
   };
 
-  // Función para manejar errores de imagen (si la URL del server falla, muestra default)
   const handleImageError = (e) => {
-    e.target.src = DEFAULT_AVATAR;
-    e.target.onerror = null; // Evita bucles infinitos
+    // Solo mostramos error en consola si no es la imagen por defecto, para no ensuciar
+    if (e.target.src !== DEFAULT_AVATAR) {
+        console.warn("Fallo al cargar imagen, usando default:", e.target.src);
+        e.target.src = DEFAULT_AVATAR;
+    }
   };
 
-  // Determinar qué imagen mostrar: Preview Local > URL del Usuario > Default
-  const avatarSrc = localPreview || user.profilePicUrl || DEFAULT_AVATAR;
-
+  const avatarSrc = localPreview || getImageUrl(user.profilePicUrl);
   const lastGame = juegos.length > 0 ? juegos[0] : null;
 
   return (
     <div style={styles.wrapper}>
-      
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -97,14 +117,14 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
 
       <div style={styles.dashboardGrid}>
         
-        {/* --- TARJETA 1: ID CARD --- */}
+        {/* --- ID CARD --- */}
         <div style={{...styles.card, ...styles.idCard}}>
             <div style={styles.avatarWrapper} onClick={onAvatarClick} title="Clic para cambiar foto">
                 <img 
                     src={avatarSrc} 
                     alt="Avatar" 
                     style={styles.avatar} 
-                    onError={handleImageError} // <--- ESTO EVITA QUE SE ROMPA EL DISEÑO
+                    onError={handleImageError} 
                 />
                 <div style={styles.cameraOverlay}>📷</div>
                 <div style={styles.onlineBadge}></div>
@@ -112,7 +132,6 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
             <div style={styles.idInfo}>
                 <h1 style={styles.nickname}>{user.nickname || "Agente"}</h1>
                 <p style={styles.userTitle}>{user.phrase || "Miembro de Plus Ultra"}</p>
-                
                 <div style={styles.xpContainer}>
                     <div style={styles.levelBadge}>LVL {nivelActual}</div>
                     <div style={styles.xpBarBack}>
@@ -124,7 +143,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
             <div style={styles.bgDecoration}></div>
         </div>
 
-        {/* --- TARJETA 2: STATS --- */}
+        {/* --- STATS --- */}
         <div style={{...styles.card, ...styles.statsCard}}>
             <div style={styles.statItem}>
                 <span style={styles.statValue}>{totalJuegos}</span>
@@ -142,7 +161,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
             </div>
         </div>
 
-        {/* --- TARJETA 3: TASA DE FINALIZACIÓN --- */}
+        {/* --- CHART --- */}
         <div style={{...styles.card, ...styles.chartCard}}>
             <h3 style={styles.cardTitle}>TASA DE FINALIZACIÓN</h3>
             <div style={styles.chartContainer}>
@@ -153,7 +172,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
             </div>
         </div>
 
-        {/* --- TARJETA 4: HERO --- */}
+        {/* --- HERO --- */}
         <div style={{...styles.card, ...styles.heroCard, backgroundImage: lastGame ? `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.9)), url(${lastGame.imagenPortada})` : 'none'}}>
             {lastGame ? (
                 <div style={styles.heroContent}>
@@ -168,7 +187,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
                         <div style={{...styles.progressBarFill, width: `${(lastGame.logrosObtenidos / (lastGame.logrosTotales || 1)) * 100}%`}}></div>
                     </div>
                     <p style={{fontSize: '10px', marginTop: '5px', opacity: 0.7}}>
-                         Progreso: {lastGame.logrosObtenidos}/{lastGame.logrosTotales || '?'} Logros
+                          Progreso: {lastGame.logrosObtenidos}/{lastGame.logrosTotales || '?'} Logros
                     </p>
                 </div>
             ) : (
@@ -176,7 +195,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
             )}
         </div>
 
-        {/* --- TARJETA 5: SYNDICATE --- */}
+        {/* --- SYNDICATE --- */}
         <div style={{...styles.card, ...styles.friendsCard}}>
             <div style={styles.cardHeaderRow}>
                 <h3 style={styles.cardTitle}>SYNDICATE</h3> 
@@ -186,7 +205,12 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
                 {friends.length > 0 ? (
                     friends.map((friend, i) => (
                         <div key={i} style={styles.friendRow}>
-                            <img src={friend.profilePicUrl || DEFAULT_AVATAR} style={styles.miniAvatar} alt="" onError={handleImageError} />
+                            <img 
+                                src={getImageUrl(friend.profilePicUrl)} 
+                                style={styles.miniAvatar} 
+                                alt="" 
+                                onError={handleImageError} 
+                            />
                             <div style={styles.friendInfo}>
                                 <span style={styles.friendName}>{friend.nickname || friend.email.split('@')[0]}</span>
                                 <span style={{...styles.friendStatus, color: '#00f3ff'}}>CONECTADO</span>
@@ -202,7 +226,7 @@ const PerfilView = ({ currentUser, friends = [], juegos = [], handleUploadProfil
             </div>
         </div>
 
-        {/* --- TARJETA 6: LOG --- */}
+        {/* --- LOG --- */}
         <div style={{...styles.card, ...styles.logCard}}>
             <h3 style={styles.cardTitle}>REGISTRO DEL SISTEMA</h3>
             <div style={styles.terminalWindow}>
@@ -280,17 +304,17 @@ const styles = {
     marginBottom: '15px', 
     cursor: 'pointer',
     transition: 'transform 0.2s',
-    width: '130px',  // Forzamos ancho
-    height: '130px', // Forzamos alto
+    width: '130px',
+    height: '130px',
   },
   avatar: {
-    width: '100%',   // Ocupa todo el contenedor
-    height: '100%',  // Ocupa todo el contenedor
+    width: '100%',
+    height: '100%',
     borderRadius: '50%',
     border: '4px solid #fff',
     boxShadow: '0 0 25px rgba(213, 36, 201, 0.6)',
-    objectFit: 'cover', // IMPORTANTE: Evita que la imagen se deforme
-    backgroundColor: '#222', // Fondo oscuro por si es transparente
+    objectFit: 'cover',
+    backgroundColor: '#222',
   },
   cameraOverlay: {
     position: 'absolute',

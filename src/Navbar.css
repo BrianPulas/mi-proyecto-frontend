@@ -1,67 +1,90 @@
-/* --- En Navbar.css --- */
+/* Estilos generales del Navbar */
 .navbar {
-  /* --- ¡NUEVO! Posición Fija --- */
-  position: sticky; /* Se queda fijo en la parte superior */
-  top: 0;
-  width: 100%;
-  z-index: 1200; /* Por encima de paneles laterales */
-
-  /* --- ¡NUEVO! Efecto Vidrio (Acrílico) --- */
-  /* Fondo oscuro con 80% de opacidad */
-  background-color: rgba(30, 30, 30, 0.8); /* Es tu --color-bg-card con transparencia */
-  
-  /* El "vidrio esmerilado" */
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px); /* Para Safari */
-  
-  /* Borde sutil para separarlo del contenido */
-  border-bottom: 1px solid var(--color-border);
-  
-  /* --- Estilos que ya tenías --- */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  box-shadow: none; /* Quitamos cualquier sombra vieja */
+  padding: 15px 30px;
+  background-color: rgba(20, 20, 35, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Rajdhani', sans-serif;
 }
 
-/* Estilo del logo */
-.navbar-logo a {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-weight: 700;
-  font-size: 1.5rem; 
-  color: var(--color-text-primary); /* Texto claro */
+/* LOGO */
+.navbar-logo .logo-link-themed {
   text-decoration: none;
-}
-.navbar-logo a:hover {
-  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
 }
 
-/* --- Estilos del Menú en ESCRITORIO --- */
+.logo-P, .logo-S, .logo-U2, .logo-R { color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+.logo-L, .logo-U, .logo-L2, .logo-T, .logo-A { color: #d524c9; text-shadow: 0 0 10px rgba(213, 36, 201, 0.6); }
+.logo-space { width: 10px; }
+
+/* Imagen del Logo */
+.navbar-logo-img {
+  height: 20px; 
+  width: auto;
+  transform: scale(5.0);
+  transform-origin: left center;
+}
+
+/* ENLACES */
 .navbar-links {
-  display: flex;
   list-style: none;
-  gap: 1.5rem;
+  display: flex;
+  gap: 30px;
+  align-items: center;
   margin: 0;
   padding: 0;
-  align-items: center; /* Para alinear el botón de login */
 }
 
-.navbar-links a {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--color-text-secondary); /* Texto gris sutil */
+.navbar-links li a {
   text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: background-color 0.2s, color 0.2s;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
 }
 
-.navbar-links a:hover {
-  background-color: var(--color-bg-input);
-  color: var(--color-text-primary);
-  text-decoration: none;
+.navbar-links li a:hover {
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+}
+
+/* USUARIO */
+.user-badge-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.user-badge-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+}
+
+.nav-avatar {
+  transition: transform 0.3s ease;
+}
+
+.user-badge-link:hover .nav-avatar {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
 /* Botón Hamburguesa */
@@ -77,13 +100,18 @@
   display: block;
   width: 25px;
   height: 3px;
-  background-color: var(--color-text-primary); /* Barras claras */
+  background-color: var(--color-text-primary);
   margin: 5px 0;
   transition: all 0.3s;
 }
 
 /* --- Estilos para MÓVIL --- */
 @media (max-width: 768px) {
+  .navbar-logo-img {
+    height: 35px;
+    transform: scale(1.1);
+  }
+
   .navbar-toggle {
     display: block;
   }
@@ -96,9 +124,7 @@
     width: 100%;
     height: 100vh;
     padding-top: 5rem;
-    
-    background-color: var(--color-bg-card); /* Fondo oscuro */
-    
+    background-color: var(--color-bg-card);
     flex-direction: column;
     align-items: center;
     gap: 2rem;
@@ -111,18 +137,28 @@
   .navbar-links a {
     font-size: 1.5rem;
   }
+  
+  .navbar-profile {
+    flex-direction: row-reverse; 
+  }
 }
+
 /* ------------------------------------------- */
-/* (¡NUEVO!) Estilos para el Perfil en Navbar */
+/* Estilos para el Perfil en Navbar */
 /* ------------------------------------------- */
+
+.navbar-profile-container {
+  position: relative;
+}
 
 .navbar-profile {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.25rem 0.5rem !important; /* !important para anular el padding anterior */
+  padding: 0.25rem 0.5rem !important;
   border-radius: 6px;
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .navbar-profile:hover {
@@ -133,7 +169,7 @@
 .navbar-profile img {
   width: 32px;
   height: 32px;
-  border-radius: 50%; /* Hace la imagen redonda */
+  border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--color-border);
 }
@@ -144,54 +180,21 @@
   font-size: 0.9rem;
 }
 
-/* Botón de Cerrar Sesión */
-.navbar-logout-button {
-  color: var(--color-red-text) !important; /* Rojo sutil */
-}
-.navbar-logout-button:hover {
-  background-color: var(--color-red-bg) !important;
-  color: var(--color-red-text) !important;
-}
-
-/* En móvil, ordena el perfil al final */
-@media (max-width: 768px) {
-  .navbar-profile {
-    /* Invierte el orden para que la imagen quede después del nombre */
-    flex-direction: row-reverse; 
-  }
-}
-.navbar-profile-container {
-  position: relative;
-}
-
-.navbar-profile {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.navbar-profile img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
+/* Menú desplegable del perfil */
 .profile-menu {
   position: absolute;
   right: 0;
   top: calc(100% + 8px);
-  /* Efecto glass (acrílico) */
-  background-color: rgba(30, 30, 30, 0.8);
+  background-color: rgba(30, 30, 30, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--color-shadow);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   width: 320px;
   padding: 1rem;
-  z-index: 1000;
+  z-index: 1300;
 }
 
 .profile-menu-row {
@@ -200,42 +203,165 @@
   margin-bottom: 0.75rem;
 }
 
-.profile-menu .input-field {
-  flex: 1;
-}
-
-.profile-menu .button {
-  width: 100%;
-}
-
 .profile-menu-divider {
   height: 1px;
   background: var(--color-border);
   margin: 0.25rem 0 0.75rem;
 }
-/* --- (¡NUEVO!) Estilo para la imagen del Logo --- */
 
-.navbar-logo a {
-  /* Esto ayuda a alinear la imagen verticalmente si es necesario */
-  display: inline-flex;
-  align-items: center;
-  line-height: 0;
+/* --- ESTILOS DETALLE JUEGO (HERO - NUEVO) --- */
+/* Esta sección transforma la vista de detalles en algo espectacular */
+
+.detail-hero-section {
+  position: relative;
+  height: 50vh; /* Ocupa la mitad de la pantalla */
+  min-height: 400px;
+  background-size: cover;
+  background-position: center top;
+  /* Máscara para desvanecer la imagen hacia abajo y que se funda con el fondo */
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 }
 
-.navbar-logo-img {
-  /* Define la altura de tu logo */
-  height: 20px; 
-  /* El ancho se ajustará automáticamente */
-  width: auto;
-  /* Agranda visualmente sin alterar el layout del navbar */
-  transform: scale(5.0);
-  transform-origin: left center;
+/* Capa oscura sobre la imagen para que los textos resalten */
+.detail-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(20,20,35,0.3) 0%, var(--color-bg-main) 100%);
 }
 
-/* Opcional: si el logo se ve mal en móvil */
-@media (max-width: 768px) {
-  .navbar-logo-img {
-    height: 35px; /* Un poco más pequeño en móviles */
-    transform: scale(1.1);
+/* Contenedor que "flota" sobre el banner */
+.detail-content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  margin-top: -150px; /* Esto hace que suba sobre la imagen */
+  z-index: 10;
+  padding-bottom: 3rem;
+}
+
+/* Grid para el encabezado (Portada + Título) */
+.detail-header-grid {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+/* La carátula del juego */
+.detail-cover-art {
+  width: 100%;
+  height: 350px; /* Altura fija para uniformidad */
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8); /* Sombra potente */
+  border: 1px solid rgba(255,255,255,0.1);
+  background-color: #1a1a1a;
+  transition: transform 0.3s ease;
+}
+
+.detail-cover-art:hover {
+  transform: scale(1.02);
+}
+
+/* Bloque del título */
+.detail-title-block {
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+.detail-title-large {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #fff, #ccc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Badges de información (Año, Género...) */
+.detail-meta-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.meta-badge {
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #ddd;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Botón "Volver" flotante */
+.back-button-floating {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 20;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.back-button-floating:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: #00ff88;
+}
+
+/* Grid del cuerpo (Info principal vs Barra lateral) */
+.detail-body-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 2 partes contenido, 1 parte lateral */
+  gap: 2rem;
+}
+
+/* Paneles con efecto vidrio */
+.glass-panel {
+  background: rgba(30, 30, 40, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+}
+
+.panel-title {
+  font-size: 1.2rem;
+  color: #00ff88;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.5rem;
+}
+
+/* Ajustes Responsive */
+@media (max-width: 900px) {
+  .detail-header-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    margin-top: -100px;
   }
+  .detail-content-wrapper { margin-top: -50px; }
+  .detail-cover-art { width: 200px; height: 300px; }
+  .detail-title-large { font-size: 2.5rem; }
+  .detail-meta-badges { justify-content: center; }
+  .detail-body-grid { grid-template-columns: 1fr; }
 }
